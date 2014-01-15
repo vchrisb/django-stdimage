@@ -1,5 +1,9 @@
 .. image:: https://travis-ci.org/codingjoe/django-stdimage.png
   :target: https://travis-ci.org/codingjoe/django-stdimage
+.. image:: https://pypip.in/v/django-stdimage/badge.png
+  :target: https://crate.io/packages/django-stdimage
+.. image:: https://pypip.in/d/django-stdimage/badge.png
+  :target: https://crate.io/packages/django-stdimage
 
 Django Standarized Image Field
 ==============================
