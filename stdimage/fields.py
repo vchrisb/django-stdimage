@@ -86,7 +86,6 @@ class StdImageField(ImageField):
 
         size = kwargs.pop('size', None)
         thumbnail_size = kwargs.pop('thumbnail_size', None)
-        print(thumbnail_size)
         if size or thumbnail_size:
             warn('Size and thumbnail_size keyword arguments are deprecated in favor of variations.', DeprecationWarning)
 
@@ -97,10 +96,7 @@ class StdImageField(ImageField):
         if not 'thumbnail' in variations and thumbnail_size:
             variations['thumbnail'] = thumbnail_size
 
-        print(variations)
-
         self.variations = []
-        print(variations)
 
         for key, attr in variations.iteritems():
             if attr and isinstance(attr, (tuple, list)):
@@ -110,7 +106,6 @@ class StdImageField(ImageField):
                 self.variations.append(variation)
             else:
                 setattr(self, key, None)
-        print(self.variations)
 
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
