@@ -3,16 +3,17 @@ from setuptools import setup
 
 setup(
     name='django-stdimage',
-    version='0.4.0',
+    version='0.3.0',
     description='Django Standarized Image Field',
-    author='garcia.marc',
-    url='https://github.com/humanfromearth/django-stdimage',
-    author_email='garcia.marc@gmail.com',
-    license='lgpl',
+    author='codingjoe',
+    url='https://github.com/codingjoe/django-stdimage',
+    author_email='info@johanneshoppe.com',
+    license='License :: OSI Approved :: MIT License',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
+        'Topic :: Multimedia :: Graphics :: Graphics Conversion',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
         'Operating System :: OS Independent',
@@ -21,5 +22,5 @@ setup(
     ],
     packages=['stdimage'],
     include_package_data=True,
-    requires=['django (>=1.0)',],
+    requires=['django (>=1.2.7)', ],
 )
