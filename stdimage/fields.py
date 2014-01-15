@@ -33,31 +33,35 @@ class ThumbnailField(object):
 
 
 class VariationField(object):
-    """Instances of this class will be used to access data of the
-    generated thumbnails
-
-    """
+    """Instances of this class will be used to access data of the generated variations."""
 
     def __init__(self, name):
+        """
+
+        :param name: str
+        """
         self.name = name
         self.storage = FileSystemStorage()
 
     @property
     def path(self):
+        """Return the abs. path of the image file."""
         return self.storage.path(self.name)
 
     @property
     def url(self):
+        """Return the url of the image file."""
         return self.storage.url(self.name)
 
     @property
     def size(self):
+        """Return the size of the image file, reported by os.stat()."""
         return self.storage.size(self.name)
 
 
 class StdImageFileDescriptor(ImageFileDescriptor):
-    """ The thumbnail property of the field should be accessible in instance
-    cases
+    """
+    The thumbnail property of the field should be accessible in instance cases
 
     """
 
@@ -67,13 +71,14 @@ class StdImageFileDescriptor(ImageFileDescriptor):
 
 
 class StdImageField(ImageField):
-    """Django field that behaves as ImageField, with some extra features like:
-        - Auto resizing
-        - Automatically generate thumbnails
-        - Allow image deletion
 
     """
+    Django field that behaves as ImageField, with some extra features like:
+        - Auto resizing
+        - Allow image deletion
 
+    :param variations: size variations of the image
+    """
     descriptor_class = StdImageFileDescriptor
 
     def __init__(self, verbose_name=None, name=None, variations={}, *args, **kwargs):
@@ -81,15 +86,14 @@ class StdImageField(ImageField):
         Standardized ImageField for Django
         Usage: StdImageField(upload_to='PATH', variations={'thumbnail': (width, height, boolean, algorithm)})
         :param variations: size variations of the image
-        :rtype variations: dict
+        :rtype variations: StdImageField
         """
-
         size = kwargs.pop('size', None)
         thumbnail_size = kwargs.pop('thumbnail_size', None)
         if size or thumbnail_size:
             warn('Size and thumbnail_size keyword arguments are deprecated in favor of variations.', DeprecationWarning)
 
-        param_size = ('width', 'height', 'force', 'resample')
+        param_size = ('width', 'height', 'crop', 'resample')
 
         if not 'size' in variations and size:
             variations['size'] = size
@@ -119,7 +123,13 @@ class StdImageField(ImageField):
 
     @staticmethod
     def _get_variation_filename(variation, filename):
-        """Returns the filename of the picture's right size asscociated to sthe standart image filename
+        """
+        Returns the filename of the picture's right size asscociated to sthe standart image filename
+
+        :rtype : str
+        :param variation: variation
+        :param filename: filename
+        :return: full file path
         """
         splitted_filename = list(os.path.splitext(filename))
         splitted_filename.insert(1, '.%s' % variation['name'])
@@ -127,22 +137,12 @@ class StdImageField(ImageField):
 
     @staticmethod
     def _resize_image(filename, size):
-        """Resizes the image to specified width, height and force option
-
-        Arguments::
-
-        filename -- full path of image to resize
-        size -- dictionary with
-            - width: int
-            - height: int
-            - force: bool
-                if True, image will be cropped to fit the exact size,
-                if False, it will have the bigger size that fits the specified
-                size, but without cropping, so it could be smaller on width
-                or height
-
         """
+        Resizes the image to specified width, height and optional crop and resample.
 
+        :param filename: str
+        :param size: dict
+        """
         width, height = 0, 1
 
         try:
@@ -166,7 +166,7 @@ class StdImageField(ImageField):
                 img.thumbnail((int(img.size[0] / factor),
                                int(img.size[1] / factor)), resample=resample)
 
-            if size['force']:
+            if size['crop']:
                 img = ImageOps.fit(img, (size['width'], size['height']), method=resample)
             else:
                 img.thumbnail((size['width'], size['height']), resample=resample)
@@ -177,11 +177,7 @@ class StdImageField(ImageField):
                 img.save(filename)
 
     def _rename_resize_image(self, instance=None, **kwargs):
-        """Renames the image, and calls methods to resize and create the
-        thumbnail.
-
-        """
-
+        """Renames the image, and calls methods to resize and create the variations."""
         if getattr(instance, self.name):
             filename = getattr(instance, self.name).path
             ext = os.path.splitext(filename)[1].lower().replace('jpg', 'jpeg')
@@ -198,10 +194,10 @@ class StdImageField(ImageField):
                 instance.save()
 
     def _set_thumbnail(self, instance=None, **kwargs):
-        """Creates a "thumbnail" object as attribute of the ImageField instance
+        """
+        Creates a "thumbnail" object as attribute of the ImageField instance
         Thumbnail attribute will be of the same class of original image, so
         "path", "url"... properties can be used
-
         """
         warn('This setter is deprecated in favor of _set_variations.', DeprecationWarning)
         if getattr(instance, self.name):
@@ -213,9 +209,12 @@ class StdImageField(ImageField):
             setattr(getattr(instance, self.name), 'thumbnail', thumbnail_field)
 
     def set_variations(self, instance=None, **kwargs):
-        """Creates a "variation" object as attribute of the ImageField instance.
+        """
+        Creates a "variation" object as attribute of the ImageField instance.
         Variation attribute will be of the same class as the original image, so
         "path", "url"... properties can be used
+
+        :param instance: FileField
         """
         if getattr(instance, self.name):
             filename = self.generate_filename(instance,
@@ -228,15 +227,15 @@ class StdImageField(ImageField):
 
     def formfield(self, **kwargs):
         """Specify form field and widget to be used on the forms"""
-
         kwargs['widget'] = DelAdminFileWidget
         kwargs['form_class'] = StdImageFormField
         return super(StdImageField, self).formfield(**kwargs)
 
     def save_form_data(self, instance, data):
-        """Overwrite save_form_data to delete images if "delete" checkbox
-        is selected
+        """
+        Overwrite save_form_data to delete images if "delete" checkbox is selected
 
+        :param instance: Form
         """
         if data == '__deleted__':
             filename = getattr(instance, self.name).path
@@ -251,11 +250,7 @@ class StdImageField(ImageField):
             super(StdImageField, self).save_form_data(instance, data)
 
     def get_db_prep_save(self, value, connection=None):
-        """Overwrite get_db_prep_save to allow saving nothing to the database
-        if image has been deleted
-
-        """
-
+        """Overwrite get_db_prep_save to allow saving nothing to the database if image has been deleted"""
         if value:
             return super(StdImageField, self).get_db_prep_save(value, connection=connection)
         else:
