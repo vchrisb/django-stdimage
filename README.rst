@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/codingjoe/django-stdimage.png)](https://travis-ci.org/codingjoe/django-stdimage)
+
 Django Standarized Image Field
 ==============================
 
