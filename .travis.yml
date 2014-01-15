@@ -9,6 +9,7 @@ env:
   - DJANGO=1.5.5
   - DJANGO=1.6.1
 script:
-  - python tests/bootstrap.py
-  - tests/bin/buildout
-  - tests/bin/test
+  - cd tests
+  - python bootstrap.py
+  - bin/buildout
+  - bin/test
