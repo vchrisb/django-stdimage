@@ -58,3 +58,9 @@ Using `image_all` field previously defined (that creates a thumbnail), if an ima
     image_all_14.jpeg
     image_all_14.large.jpeg
     image_all_14.thumbnail.jpeg
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/codingjoe/django-stdimage/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
