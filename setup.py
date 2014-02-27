@@ -3,14 +3,14 @@ from setuptools import setup
 
 setup(
     name='django-stdimage',
-    version='0.3.0',
+    version='0.4.0',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
     author_email='info@johanneshoppe.com',
     license='License :: OSI Approved :: MIT License',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Topic :: Multimedia :: Graphics :: Graphics Conversion',

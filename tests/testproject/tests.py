@@ -48,7 +48,7 @@ class TestModel(TestStdImage):
         instance.save()
         self.assertEqual(SimpleModel.objects.count(), 1)
         self.assertEqual(SimpleModel.objects.get(pk=1), instance)
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.gif')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
     def test_variations(self):
         """Adds image and checks filesystem as well as width and height."""
@@ -56,10 +56,11 @@ class TestModel(TestStdImage):
         instance.image = self.fixtures['600x400.jpg']
         instance.save()
 
-        self.assertEqual(instance.image.medium.size, self.fixtures['600x400.jpg'].size)
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.jpg')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.medium.jpg')))
 
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.jpeg')))
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.medium.jpeg')))
+        self.assertEqual(instance.image.medium.width, 600)
+        self.assertEqual(instance.image.medium.height, 400)
 
 
 class TestModelForm(TestStdImage):
@@ -95,7 +96,7 @@ class TestAdmin(TestStdImage):
         self.client.post('/admin/testproject/simplemodel/add/', {
             'image': self.fixtures['100.gif']
         })
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.gif')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
     def test_delete(self):
         """ Test if an image can be deleted """
@@ -108,7 +109,7 @@ class TestAdmin(TestStdImage):
             'image_delete': 'checked'
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR,
-                                                     'image_1.gif')))
+                                                     'image.gif')))
 
     def test_thumbnail(self):
         """ Test if the thumbnail is there """
@@ -116,8 +117,8 @@ class TestAdmin(TestStdImage):
         self.client.post('/admin/testproject/thumbnailmodel/add/', {
             'image': self.fixtures['100.gif']
         })
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.gif')))
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image_1.thumbnail.gif')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
 
     def test_delete_thumbnail(self):
         """ Delete an image with thumbnail """
@@ -130,5 +131,5 @@ class TestAdmin(TestStdImage):
         self.client.post('/admin/testproject/thumbnailmodel/1/', {
             'image_delete': 'checked'
         })
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image_1.gif')))
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image_1.thumbnail.gif')))
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
