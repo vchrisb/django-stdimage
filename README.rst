@@ -12,25 +12,25 @@ Django Standarized Image Field
 
 Django Field that implement the following features:
 
- * Django-Storages compatible (S3)
- * Resize images to different sizes
- * Access thumbnails on model level, no template tags required
- * Preserves original image
- * Allow image deletion
- * Rename files to a standardized name (using a callable upload_to)
+* Django-Storages compatible (S3)
+* Resize images to different sizes
+* Access thumbnails on model level, no template tags required
+* Preserves original image
+* Allow image deletion
+* Rename files to a standardized name (using a callable upload_to)
 
 Installation
 ------------
 
-    Install latest PIL - there is really no reason to use this package without it
+Install latest PIL - there is really no reason to use this package without it
 
-    `easy_install django-stdimage`
+`easy_install django-stdimage`
 
-    or
+or
 
-    `pip django-stdimage`
+`pip django-stdimage`
 
-    Put `'stdimage'` in the INSTALLED_APPS
+Put `'stdimage'` in the INSTALLED_APPS
 
 Usage
 -----
@@ -39,22 +39,28 @@ Import it in your project, and use in your models.
 
 Example::
 
-    [...]
     from stdimage import StdImageField
 
     class MyClass(models.Model):
-        image1 = StdImageField(upload_to='path/to/img') # works as ImageField
-        image2 = StdImageField(upload_to='path/to/img', blank=True) # can be deleted through admin
-        image3 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)}) # creates a thumbnail resized to maximum size to fit a 100x75 area
-        image4 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True}) # creates a thumbnail resized to 100x100 croping if necessary
+        # works as ImageField
+        image1 = StdImageField(upload_to='path/to/img')
 
-        image_all = StdImageField(upload_to='path/to/img', blank=True, variations={'large': (640, 480), 'thumbnail': (100, 100, True)}) # all previous features in one declaration
+        # can be deleted through admin
+        image2 = StdImageField(upload_to='path/to/img', blank=True)
+
+        # creates a thumbnail resized to maximum size to fit a 100x75 area
+        image3 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)})
+
+        # creates a thumbnail resized to 100x100 croping if necessary
+        image4 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True})
+
+        # all previous features in one declaration
+        image_all = StdImageField(upload_to='path/to/img', blank=True,
+                        variations={'large': (640, 480), 'thumbnail': (100, 100, True)})
 
 For using generated thumbnail in templates use "myimagefield.thumbnail". Example::
 
-    [...]
     <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
-    [...]
 
 About image names
 -----------------
@@ -66,10 +72,17 @@ Example::
     from functools import partial
 
     class MyClass(models.Model)
-        image1 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME)  # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
-        image2 = StdImageField(upload_to=partial(UPLOAD_TO_CLASS_NAME, name='pic'))  # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
-        image3 = StdImageField(upload_to=partial(UPLOAD_TO_UUID, path='images'))  # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
-        image4 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME_UUID)  # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
+        # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
+        image1 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME)
+
+        # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
+        image2 = StdImageField(upload_to=partial(UPLOAD_TO_CLASS_NAME, name='pic'))
+
+        # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
+        image3 = StdImageField(upload_to=partial(UPLOAD_TO_UUID, path='images'))
+
+        # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
+        image4 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME_UUID)
 
 
 .. image:: https://d2weczhvl823v0.cloudfront.net/codingjoe/django-stdimage/trend.png
