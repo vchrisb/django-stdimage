@@ -65,8 +65,20 @@ Example::
     from stdimage import StdImageField, UPLOAD_TO_CLASS_NAME, UPLOAD_TO_CLASS_NAME_UUID, UPLOAD_TO_UUID
     from functools import partial
 
+<<<<<<< HEAD
     class MyClass(models.Model)
         image1 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME)  # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
         image2 = StdImageField(upload_to=partial(UPLOAD_TO_CLASS_NAME, name='pic'))  # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
         image3 = StdImageField(upload_to=partial(UPLOAD_TO_UUID, path='images'))  # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
         image4 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME_UUID)  # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
+=======
+    image_all_14.jpeg
+    image_all_14.large.jpeg
+    image_all_14.thumbnail.jpeg
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/codingjoe/django-stdimage/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
+>>>>>>> FETCH_HEAD
