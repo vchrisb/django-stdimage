@@ -45,7 +45,7 @@ class StdImageFieldFile(ImageFieldFile):
         try:
             import Image, ImageOps
         except ImportError:
-            from PIL import Image, ImageOps, PIL
+            from PIL import Image, ImageOps
 
         if not variation['resample']:
             resample = Image.ANTIALIAS
