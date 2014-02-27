@@ -8,7 +8,9 @@ env:
   - DJANGO=1.4
   - DJANGO=1.5.5
   - DJANGO=1.6.1
-before_install: sudo apt-get install libjpeg-dev
+before_install:
+  - sudo apt-get install libjpeg-dev
+  - sudo ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 script:
   - cd tests
   - python bootstrap.py
