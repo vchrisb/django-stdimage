@@ -8,7 +8,7 @@ def upload_to(name, ext, path=''):
 
 def upload_to_uuid(instance, filename, path=''):
     ext = filename.rsplit('.', 1)[-1]
-    return upload_to(uuid.uuid4(), ext, path)
+    return upload_to(uuid.uuid4().hex, ext, path)
 
 
 def upload_to_class_name_dir(instance, filename, name=''):
@@ -20,4 +20,4 @@ def upload_to_class_name_dir(instance, filename, name=''):
 
 
 def upload_to_class_name_dir_uuid(instance, filename):
-    return upload_to_class_name_dir(instance, filename, uuid.uuid4())
+    return upload_to_class_name_dir(instance, filename, uuid.uuid4().hex)
