@@ -4,6 +4,8 @@ from cStringIO import StringIO
 from django.db.models import signals
 from django.db.models.fields.files import ImageField, ImageFileDescriptor, ImageFieldFile
 from django.core.files.base import ContentFile
+from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from forms import StdImageFormField
 from widgets import DelAdminFileWidget
@@ -115,15 +117,18 @@ class StdImageField(ImageField):
 
     attr_class = StdImageFieldFile
 
-    def __init__(self, verbose_name=None, name=None, variations={}, *args, **kwargs):
+    def __init__(self, verbose_name=None, name=None, variations={}, min_size=None, max_size=None, *args, **kwargs):
         """
         Standardized ImageField for Django
         Usage: StdImageField(upload_to='PATH', variations={'thumbnail': (width, height, boolean, algorithm)})
         :param variations: size variations of the image
         :rtype variations: StdImageField
         """
+
         param_size = ('width', 'height', 'crop', 'resample')
         self.variations = []
+        self.min_size = {'width': 0, 'height': 0}
+        self.max_size = {'width': float('inf'), 'height': float('inf')}
 
         for key, attr in variations.iteritems():
             if attr and isinstance(attr, (tuple, list)):
@@ -133,6 +138,13 @@ class StdImageField(ImageField):
                 self.variations.append(variation)
             else:
                 setattr(self, key, None)
+
+        if not min_size:  # min_size gets set to biggest variation
+            for variation in self.variations:
+                if variation['width'] > self.min_size['width']:
+                    self.min_size['width'] = variation['width']
+                if variation['height'] > self.min_size['height']:
+                    self.min_size['height'] = variation['height']
 
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
@@ -184,3 +196,15 @@ class StdImageField(ImageField):
 
         super(StdImageField, self).contribute_to_class(cls, name)
         signals.post_init.connect(self.set_variations, sender=cls)
+
+    def validate(self, value, model_instance):
+        super(StdImageField, self).validate(value, model_instance)
+        if hasattr(value, 'file'):  # fails if file has been deleted.
+            if value.width < self.min_size['width'] or value.height < self.min_size['height']:
+                raise ValidationError(
+                    _('The image you uploaded is too small. The required minimal resolution is: %sx%s px.') %
+                    (self.min_size['width'], self.min_size['height']))
+            elif value.width > self.max_size['width'] or value.height > self.max_size['height']:
+                raise ValidationError(
+                    _('The image you uploaded is too large. The required maximal resolution is: %sx%s px.') %
+                    (self.max_size['width'], self.max_size['height']))

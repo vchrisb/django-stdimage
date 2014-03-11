@@ -3,6 +3,7 @@ from django.conf import settings
 from django.core.files import File
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 from .models import *
 from .forms import *
@@ -62,10 +63,27 @@ class TestModel(TestStdImage):
         self.assertEqual(instance.image.medium.width, 600)
         self.assertEqual(instance.image.medium.height, 400)
 
+    def test_min_size(self):
+        """Test if image matches minimal size requirements"""
+        instance = AllModel()
+        instance.image = self.fixtures['100.gif']
+        instance.save()
+
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.jpg')))
+
 
 class TestModelForm(TestStdImage):
     """Tests ModelForm"""
-    pass
+
+    def test_min_size(self):
+        """Test if image matches minimal size requirements"""
+        form = ResizeCropModelForm({'image': self.fixtures['100.gif']})
+        self.assertFalse(form.is_valid())
+
+    def test_max_size(self):
+        """Test if image matches maximal size requirements"""
+        form = MaxSizeModelForm({'image': self.fixtures['600x400.jpg']})
+        self.assertFalse(form.is_valid())
 
 
 class TestAdmin(TestStdImage):
@@ -84,9 +102,8 @@ class TestAdmin(TestStdImage):
         self.assertEqual(SimpleModel.objects.count(), 0)
 
     def test_empty_success(self):
-        """ AdminDeleteModel has blan=True and will add an instance of the
-        Model
-
+        """
+        AdminDeleteModel has blank=True and will add an instance of the Model
         """
         self.client.post('/admin/testproject/admindeletemodel/add/', {})
         self.assertEqual(AdminDeleteModel.objects.count(), 1)
@@ -130,6 +147,14 @@ class TestAdmin(TestStdImage):
         #delete
         self.client.post('/admin/testproject/thumbnailmodel/1/', {
             'image_delete': 'checked'
+        })
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
+
+    def test_min_size(self):
+        """ Tests if uploaded picture has minimal size """
+        self.client.post('/admin/testproject/allmodel/add/', {
+            'image': self.fixtures['100.gif']
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))

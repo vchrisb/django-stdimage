@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.forms.fields import ImageField
 
+
 class StdImageFormField(ImageField):
     def clean(self, data, initial=None):
         if data != '__deleted__':

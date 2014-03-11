@@ -46,6 +46,10 @@ class MultipleFieldsModel(models.Model):
     text = models.CharField('Some label', max_length=10)
 
 
+class MaxSizeModel(models.Model):
+    image = StdImageField(upload_to=upload_to, max_size=(100, 100))
+
 class AllModel(models.Model):
     """all previous features in one declaration"""
-    image = StdImageField(upload_to=upload_to, blank=True, variations={'size': (640, 480), 'thumbnail': (100, 100, True)})
+    image = StdImageField(upload_to=upload_to, blank=True,
+                          variations={'large': (600, 400), 'thumbnail': (100, 100, True)})
