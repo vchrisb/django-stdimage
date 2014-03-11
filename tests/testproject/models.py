@@ -20,7 +20,7 @@ class AdminDeleteModel(models.Model):
 
 class ResizeModel(models.Model):
     """resizes image to maximum size to fit a 640x480 area"""
-    image = StdImageField(upload_to=upload_to, variations={'medium': (600, 400)})
+    image = StdImageField(upload_to=upload_to, variations={'medium': (600, 400), 'thumbnail': (100, 75)})
 
 
 class ResizeCropModel(models.Model):

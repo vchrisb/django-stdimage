@@ -3,9 +3,7 @@ from django.conf import settings
 from django.core.files import File
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 
-from .models import *
 from .forms import *
 
 
@@ -58,7 +56,10 @@ class TestModel(TestStdImage):
         instance.save()
 
         self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.jpg')))
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.medium.jpg')))
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.jpg')))
+
+        # smaller or similar size, must resolve to same file name
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.medium.jpg')))
 
         self.assertEqual(instance.image.medium.width, 600)
         self.assertEqual(instance.image.medium.height, 400)
@@ -158,3 +159,15 @@ class TestAdmin(TestStdImage):
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
+
+    def test_widget(self):
+        """
+        Tests the admin Widget
+        """
+        self.client.post('/admin/testproject/thumbnailmodel/add/', {
+            'image': self.fixtures['600x400.jpg']
+        })
+        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.admin.jpg')))
+
+        response = self.client.get('/admin/testproject/thumbnailmodel/1/')
+        self.assertContains(response, '<img src="/media/img/image.admin.jpg" alt="image thumbnail"/>')

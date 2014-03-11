@@ -6,6 +6,12 @@ from django.db.models.fields.files import ImageField, ImageFileDescriptor, Image
 from django.core.files.base import ContentFile
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.conf import settings
+
+try:
+    import Image, ImageOps
+except ImportError:
+    from PIL import Image, ImageOps
 
 from forms import StdImageFormField
 from widgets import DelAdminFileWidget
@@ -38,17 +44,13 @@ class StdImageFieldFile(ImageFieldFile):
         for variation in self.field.variations:
             self.render_and_save_variation(name, content, variation)
 
+    def is_smaller(self, variation):
+        return self.width > variation['width'] or self.height > variation['height']
+
     def render_and_save_variation(self, name, content, variation):
         """
         Renders the image variations and saves them to the storage
         """
-        width, height = 0, 1
-
-        try:
-            import Image, ImageOps
-        except ImportError:
-            from PIL import Image, ImageOps
-
         if not variation['resample']:
             resample = Image.ANTIALIAS
 
@@ -56,38 +58,42 @@ class StdImageFieldFile(ImageFieldFile):
 
         img = Image.open(content)
 
-        if img.size[width] > variation['width'] or img.size[height] > variation['height']:
+        if self.is_smaller(variation):
             factor = 1
-            while (img.size[0] / factor > 2 * variation['width'] and
-                                   img.size[1] * 2 / factor > 2 * variation['height']):
+            while (self.width / factor > 2 * variation['width'] and
+                                   self.height * 2 / factor > 2 * variation['height']):
                 factor *= 2
             if factor > 1:
-                img.thumbnail((int(img.size[0] / factor),
-                               int(img.size[1] / factor)), resample=resample)
+                img.thumbnail((int(self.width / factor),
+                               int(self.height / factor)), resample=resample)
 
             if variation['crop']:
                 img = ImageOps.fit(img, (variation['width'], variation['height']), method=resample)
             else:
                 img.thumbnail((variation['width'], variation['height']), resample=resample)
 
-        variation_name = self.get_variation_name(self.instance, self.field, variation)
-        file_buffer = StringIO()
-        format = self.get_file_extension(name).lower().replace('jpg', 'jpeg')
-        img.save(file_buffer, format)
-        self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
-        file_buffer.close()
+            variation_name = self.get_variation_name(self.instance, self.field, variation)
+            file_buffer = StringIO()
+            format = self.get_file_extension(name).lower().replace('jpg', 'jpeg')
+            img.save(file_buffer, format)
+            self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
+            file_buffer.close()
 
     @classmethod
     def get_variation_name(cls, instance, field, variation):
         """
         Returns the variation file name based on the model it's field and it's variation
         """
-        name = getattr(instance, field.name).name
-        ext = cls.get_file_extension(name)
-        file_name = name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
-        path = name.rsplit('/', 1)[0]
+        field = getattr(instance, field.name)
+        name = field.name
+        if field.is_smaller(variation):  # use current file if
+            ext = cls.get_file_extension(name)
+            file_name = name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
+            path = name.rsplit('/', 1)[0]
 
-        return os.path.join(path, '%s.%s.%s' % (file_name, variation['name'], ext))
+            return os.path.join(path, '%s.%s.%s' % (file_name, variation['name'], ext))
+        else:
+            return name
 
     @staticmethod
     def get_file_extension(name):
@@ -138,6 +144,13 @@ class StdImageField(ImageField):
                 self.variations.append(variation)
             else:
                 setattr(self, key, None)
+
+        if 'django.contrib.admin' in settings.INSTALLED_APPS and not hasattr(self.variations, 'admin'):
+            self.variations.append({'name': 'admin',
+                                    'width': 100,
+                                    'height': 100,
+                                    'crop': False,
+                                    'resample': Image.NEAREST})
 
         if not min_size:  # min_size gets set to biggest variation
             for variation in self.variations:

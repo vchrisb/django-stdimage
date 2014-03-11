@@ -5,6 +5,7 @@ from django.contrib.admin.widgets import AdminFileWidget
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
+
 class DelAdminFileWidget(AdminFileWidget):
     """An AdminFileWidget that shows a delete checkbox"""
     input_type = 'file'
