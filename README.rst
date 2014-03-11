@@ -16,6 +16,7 @@ Django Field that implement the following features:
 * Resize images to different sizes
 * Access thumbnails on model level, no template tags required
 * Preserves original image
+* Restrict accepted image dimensions
 * Allow image deletion
 * Rename files to a standardized name (using a callable upload_to)
 
@@ -54,6 +55,9 @@ Example::
         # creates a thumbnail resized to 100x100 croping if necessary
         image4 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True})
 
+        # creates a thumbnail resized to 100x100 croping if necessary and excepts only image greater than 1920x1080px
+        image5 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True}, min_size(1920,1080))
+
         # all previous features in one declaration
         image_all = StdImageField(upload_to='path/to/img', blank=True,
                         variations={'large': (640, 480), 'thumbnail': (100, 100, True)})
@@ -84,6 +88,11 @@ Example::
         # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
         image4 = StdImageField(upload_to=UPLOAD_TO_CLASS_NAME_UUID)
 
+About image names
+-----------------
+
+You can restrict the upload dimension of images using `min_size` and `max_size`. Both arguments accept a (width, height) tuple. By default, the minimum resolution is set to the biggest variation.
+CAUTION: The `max_size` should be used with caution. As storage isn't expensive, you shouldn't restrict upload dimensions. If you seek prevent users form overflowing your memory you should restrict the HTTP upload body size.
 
 .. image:: https://d2weczhvl823v0.cloudfront.net/codingjoe/django-stdimage/trend.png
    :alt: Bitdeli badge
