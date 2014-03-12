@@ -158,6 +158,12 @@ class StdImageField(ImageField):
                     self.min_size['width'] = variation['width']
                 if variation['height'] > self.min_size['height']:
                     self.min_size['height'] = variation['height']
+        else:
+            self.min_size['width'] = min_size[0]
+            self.min_size['height'] = min_size[1]
+
+        self.max_size['width'] = max_size[0]
+        self.max_size['height'] = max_size[1]
 
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
@@ -170,11 +176,11 @@ class StdImageField(ImageField):
         :param instance: FileField
         """
         if getattr(instance, self.name):
-            name = getattr(instance, self.name)
+            field = getattr(instance, self.name)
             for variation in self.variations:
                 variation_name = self.attr_class.get_variation_name(instance, self, variation)
                 variation_field = ImageFieldFile(instance, self, variation_name)
-                setattr(getattr(instance, self.name), variation['name'], variation_field)
+                setattr(field, variation['name'], variation_field)
 
     def save_form_data(self, instance, data):
         """
