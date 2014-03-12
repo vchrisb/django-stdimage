@@ -162,8 +162,9 @@ class StdImageField(ImageField):
             self.min_size['width'] = min_size[0]
             self.min_size['height'] = min_size[1]
 
-        self.max_size['width'] = max_size[0]
-        self.max_size['height'] = max_size[1]
+        if max_size:
+            self.max_size['width'] = max_size[0]
+            self.max_size['height'] = max_size[1]
 
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
