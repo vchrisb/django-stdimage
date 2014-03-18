@@ -44,8 +44,9 @@ class StdImageFieldFile(ImageFieldFile):
         for variation in self.field.variations:
             self.render_and_save_variation(name, content, variation)
 
-    def is_smaller(self, variation):
-        return self.width > variation['width'] or self.height > variation['height']
+    @staticmethod
+    def is_smaller(img, variation):
+        return img.size[0] > variation['width'] or img.size[1] > variation['height']
 
     def render_and_save_variation(self, name, content, variation):
         """
@@ -58,7 +59,7 @@ class StdImageFieldFile(ImageFieldFile):
 
         img = Image.open(content)
 
-        if self.is_smaller(variation):
+        if self.is_smaller(img, variation):
             factor = 1
             while (self.width / factor > 2 * variation['width'] and
                                    self.height * 2 / factor > 2 * variation['height']):
@@ -71,13 +72,12 @@ class StdImageFieldFile(ImageFieldFile):
                 img = ImageOps.fit(img, (variation['width'], variation['height']), method=resample)
             else:
                 img.thumbnail((variation['width'], variation['height']), resample=resample)
-
-            variation_name = self.get_variation_name(self.instance, self.field, variation)
-            file_buffer = StringIO()
-            format = self.get_file_extension(name).lower().replace('jpg', 'jpeg')
-            img.save(file_buffer, format)
-            self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
-            file_buffer.close()
+        variation_name = self.get_variation_name(self.instance, self.field, variation)
+        file_buffer = StringIO()
+        format = self.get_file_extension(name).lower().replace('jpg', 'jpeg')
+        img.save(file_buffer, format)
+        self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
+        file_buffer.close()
 
     @classmethod
     def get_variation_name(cls, instance, field, variation):
@@ -86,14 +86,11 @@ class StdImageFieldFile(ImageFieldFile):
         """
         field = getattr(instance, field.name)
         name = field.name
-        if field.is_smaller(variation):  # use current file if
-            ext = cls.get_file_extension(name)
-            file_name = name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
-            path = name.rsplit('/', 1)[0]
+        ext = cls.get_file_extension(name)
+        file_name = name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
+        path = name.rsplit('/', 1)[0]
 
-            return os.path.join(path, '%s.%s.%s' % (file_name, variation['name'], ext))
-        else:
-            return name
+        return os.path.join(path, '%s.%s.%s' % (file_name, variation['name'], ext))
 
     @staticmethod
     def get_file_extension(name):
