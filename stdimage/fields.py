@@ -61,12 +61,12 @@ class StdImageFieldFile(ImageFieldFile):
 
         if self.is_smaller(img, variation):
             factor = 1
-            while (self.width / factor > 2 * variation['width'] and
-                                   self.height * 2 / factor > 2 * variation['height']):
+            while (img.size[0] / factor > 2 * variation['width'] and
+                                   img.size[1] * 2 / factor > 2 * variation['height']):
                 factor *= 2
             if factor > 1:
-                img.thumbnail((int(self.width / factor),
-                               int(self.height / factor)), resample=resample)
+                img.thumbnail((int(img.size[0] / factor),
+                               int(img.size[1] / factor)), resample=resample)
 
             if variation['crop']:
                 img = ImageOps.fit(img, (variation['width'], variation['height']), method=resample)
@@ -217,8 +217,9 @@ class StdImageField(ImageField):
     def validate(self, value, model_instance):
         super(StdImageField, self).validate(value, model_instance)
         if hasattr(value, 'file'):  # fails if file has been deleted.
-            stream = value.read()
-            img = Image.open(StringIO(stream))
+            value.seek(0)
+            stream = StringIO(value.read())
+            img = Image.open(stream)
             if img.size[0] < self.min_size['width'] or img.size[1] < self.min_size['height']:
                 raise ValidationError(
                     _('The image you uploaded is too small. The required minimal resolution is: %sx%s px.') %
