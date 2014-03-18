@@ -223,7 +223,7 @@ class StdImageField(ImageField):
                 raise ValidationError(
                     _('The image you uploaded is too small. The required minimal resolution is: %sx%s px.') %
                     (self.min_size['width'], self.min_size['height']))
-            elif value.width > self.max_size['width'] or value.height > self.max_size['height']:
+            elif img.size[0] > self.max_size['width'] or img.size[1] > self.max_size['height']:
                 raise ValidationError(
                     _('The image you uploaded is too large. The required maximal resolution is: %sx%s px.') %
                     (self.max_size['width'], self.max_size['height']))
