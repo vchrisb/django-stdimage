@@ -217,7 +217,9 @@ class StdImageField(ImageField):
     def validate(self, value, model_instance):
         super(StdImageField, self).validate(value, model_instance)
         if hasattr(value, 'file'):  # fails if file has been deleted.
-            if value.width < self.min_size['width'] or value.height < self.min_size['height']:
+            stream = value.read()
+            img = Image.open(StringIO(stream))
+            if img.size[0] < self.min_size['width'] or img.size[1] < self.min_size['height']:
                 raise ValidationError(
                     _('The image you uploaded is too small. The required minimal resolution is: %sx%s px.') %
                     (self.min_size['width'], self.min_size['height']))
