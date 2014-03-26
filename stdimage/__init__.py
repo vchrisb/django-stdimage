@@ -9,8 +9,9 @@ try:
         (StdImageField,),
         [],
         {
-            "size": ["size", {"default": None}],
-            "thumbnail_size": ["thumbnail_size", {"default": None}],
+            "variations": ["variations", {"default": None}],
+            "min_size": ["min_size", {"default": None}],
+            "max_size": ["max_size", {"default": None}],
         },
       )
     ]
