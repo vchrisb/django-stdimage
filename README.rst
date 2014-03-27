@@ -53,10 +53,10 @@ Example::
         image3 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)})
 
         # creates a thumbnail resized to 100x100 croping if necessary
-        image4 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True})
+        image4 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True)})
 
         # creates a thumbnail resized to 100x100 croping if necessary and excepts only image greater than 1920x1080px
-        image5 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True}, min_size(1920,1080))
+        image5 = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 100, True)}, min_size(1920, 1080))
 
         # all previous features in one declaration
         image_all = StdImageField(upload_to='path/to/img', blank=True,
