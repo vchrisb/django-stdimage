@@ -10,7 +10,8 @@ class DelAdminFileWidget(AdminFileWidget):
     """An AdminFileWidget that shows a delete checkbox"""
     input_type = 'file'
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs={}):
+	attrs.update({'accept':'image/*'})
         input = super(forms.widgets.FileInput, self).render(name, value, attrs)
         if value and hasattr(value, 'field'):
             return mark_safe(render_to_string('stdimage/admin_widget.html', {
