@@ -9,9 +9,10 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 try:
-    import Image, ImageOps
-except ImportError:
     from PIL import Image, ImageOps
+except ImportError:
+    import Image, ImageOps
+
 
 from forms import StdImageFormField
 from widgets import DelAdminFileWidget
