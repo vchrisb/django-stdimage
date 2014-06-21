@@ -142,7 +142,7 @@ class StdImageField(ImageField):
             else:
                 setattr(self, key, None)
 
-        if 'django.contrib.admin' in settings.INSTALLED_APPS and not hasattr(self.variations, 'admin'):
+        if 'django.contrib.admin' in settings.INSTALLED_APPS and not 'admin' in variations:
             self.variations.append({'name': 'admin',
                                     'width': 100,
                                     'height': 100,
