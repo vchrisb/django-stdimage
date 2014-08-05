@@ -1,5 +1,6 @@
 from django import forms
-from .models import *
+
+from .models import (SimpleModel, ResizeCropModel, MaxSizeModel)
 
 
 class SimpleModelForm(forms.ModelForm):

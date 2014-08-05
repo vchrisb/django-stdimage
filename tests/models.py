@@ -1,6 +1,8 @@
+from django.db.models.signals import post_delete, pre_save
 import os
 from django.db import models
 from stdimage import StdImageField
+from stdimage.utils import pre_delete_delete_callback, pre_save_delete_callback
 
 
 def upload_to(instance, filename):
@@ -49,7 +51,12 @@ class MultipleFieldsModel(models.Model):
 class MaxSizeModel(models.Model):
     image = StdImageField(upload_to=upload_to, max_size=(100, 100))
 
+
 class AllModel(models.Model):
     """all previous features in one declaration"""
     image = StdImageField(upload_to=upload_to, blank=True,
                           variations={'large': (600, 400), 'thumbnail': (100, 100, True)})
+
+
+post_delete.connect(pre_delete_delete_callback, sender=SimpleModel)
+pre_save.connect(pre_save_delete_callback, sender=AdminDeleteModel)

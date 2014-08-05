@@ -1,9 +1,28 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, Command
+
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import sys
+        import subprocess
+
+        errno = subprocess.call([sys.executable, 'runtests.py'])
+        raise SystemExit(errno)
+
 
 setup(
     name='django-stdimage',
-    version='0.5.10',
+    version='0.7.0',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
@@ -22,5 +41,13 @@ setup(
     ],
     packages=['stdimage'],
     include_package_data=True,
-    requires=['django (>=1.2.7)', ],
+    requires=[
+        'Django (>=1.5)',
+        'Pillow (>=2.5)',
+    ],
+    install_requires=[
+        'django>=1.5',
+        'pillow>=2.5',
+    ],
+    cmdclass={'test': PyTest},
 )

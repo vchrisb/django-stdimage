@@ -1,5 +1,6 @@
 import os
 import uuid
+from stdimage import StdImageField
 
 
 def upload_to(name, ext, path=''):
@@ -21,3 +22,20 @@ def upload_to_class_name_dir(instance, filename, name=''):
 
 def upload_to_class_name_dir_uuid(instance, filename):
     return upload_to_class_name_dir(instance, filename, uuid.uuid4().hex)
+
+
+def pre_delete_delete_callback(sender, instance, **kwargs):
+    for field in instance._meta.fields:
+        if isinstance(field, StdImageField):
+            getattr(instance, field.name).delete()
+
+
+def pre_save_delete_callback(sender, instance, **kwargs):
+    if instance.pk:
+        obj = sender.objects.get(pk=instance.pk)
+        for field in instance._meta.fields:
+            if isinstance(field, StdImageField):
+                obj_field = getattr(obj, field.name)
+                instance_field = getattr(instance, field.name)
+                if obj_field and not instance_field:
+                    obj_field.delete(False)

@@ -1,10 +1,15 @@
+# coding: utf-8
+from __future__ import (absolute_import, unicode_literals)
+
 import os
+
 from django.conf import settings
 from django.core.files import File
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .forms import *
+from .forms import ResizeCropModelForm, MaxSizeModelForm
+from .models import SimpleModel, ResizeModel, AllModel, AdminDeleteModel, ThumbnailModel
 
 
 IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
@@ -12,9 +17,7 @@ IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
 
 class TestStdImage(TestCase):
     def setUp(self):
-        user = User.objects.create_superuser('admin', 'admin@email.com',
-                                             'admin')
-        user.save()
+        User.objects.create_superuser('admin', 'admin@email.com', 'admin')
         self.client.login(username='admin', password='admin')
 
         self.fixtures = {}
@@ -27,7 +30,7 @@ class TestStdImage(TestCase):
 
     def tearDown(self):
         """Close all open fixtures and delete everything from media"""
-        for fixture in self.fixtures.values():
+        for fixture in list(self.fixtures.values()):
             fixture.close()
 
         for root, dirs, files in os.walk(IMG_DIR, topdown=False):
@@ -92,47 +95,61 @@ class TestAdmin(TestStdImage):
 
     def test_simple(self):
         """ Upload an image using the admin interface """
-        self.client.post('/admin/testproject/simplemodel/add/', {
+        self.client.post('/admin/tests/simplemodel/add/', {
             'image': self.fixtures['100.gif']
         })
         self.assertEqual(SimpleModel.objects.count(), 1)
 
     def test_empty_fail(self):
         """ Will raise an validation error and will not add an intance """
-        self.client.post('/admin/testproject/simplemodel/add/', {})
+        self.client.post('/admin/tests/simplemodel/add/', {})
         self.assertEqual(SimpleModel.objects.count(), 0)
 
     def test_empty_success(self):
-        """
-        AdminDeleteModel has blank=True and will add an instance of the Model
-        """
-        self.client.post('/admin/testproject/admindeletemodel/add/', {})
+        """ AdminDeleteModel has blank=True and will add an instance of the Model """
+        self.client.post('/admin/tests/admindeletemodel/add/', {})
         self.assertEqual(AdminDeleteModel.objects.count(), 1)
 
     def test_uploaded(self):
         """ Test simple upload """
-        self.client.post('/admin/testproject/simplemodel/add/', {
+        self.client.post('/admin/tests/simplemodel/add/', {
             'image': self.fixtures['100.gif']
         })
         self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
-    def test_delete(self):
-        """ Test if an image can be deleted """
-
-        self.client.post('/admin/testproject/admindeletemodel/add/', {
+    def test_clear(self):
+        """ Test if a field can be cleared """
+        self.client.post('/admin/tests/admindeletemodel/add/', {
             'image': self.fixtures['100.gif']
         })
-        #delete
-        res = self.client.post('/admin/testproject/admindeletemodel/1/', {
-            'image_delete': 'checked'
+        self.client.post('/admin/tests/admindeletemodel/1/', {
+            'image-clear': 'checked'
         })
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR,
-                                                     'image.gif')))
+        obj = AdminDeleteModel.objects.get(pk=1)
+        self.assertFalse(obj.image)
+
+    def test_delete(self):
+        """ Tests if FieldFile can be deleted """
+        obj = SimpleModel.objects.create(image=self.fixtures['100.gif'])
+        obj.image.delete()
+        self.assertFalse(obj.image)
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+
+    def test_deletion_singnal_receiver(self):
+        obj = SimpleModel.objects.create(image=self.fixtures['100.gif'])
+        obj.delete()
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+
+    def test_pre_save_delete_callback(self):
+        obj = AdminDeleteModel.objects.create(image=self.fixtures['100.gif'])
+        self.client.post('/admin/tests/admindeletemodel/1/', {
+            'image-clear': 'checked'
+        })
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
     def test_thumbnail(self):
         """ Test if the thumbnail is there """
-
-        self.client.post('/admin/testproject/thumbnailmodel/add/', {
+        self.client.post('/admin/tests/thumbnailmodel/add/', {
             'image': self.fixtures['100.gif']
         })
         self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
@@ -140,34 +157,15 @@ class TestAdmin(TestStdImage):
 
     def test_delete_thumbnail(self):
         """ Delete an image with thumbnail """
-
-        self.client.post('/admin/testproject/thumbnailmodel/add/', {
-            'image': self.fixtures['100.gif']
-        })
-
-        #delete
-        self.client.post('/admin/testproject/thumbnailmodel/1/', {
-            'image_delete': 'checked'
-        })
+        obj = ThumbnailModel.objects.create(image=self.fixtures['100.gif'])
+        obj.image.delete()
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
 
     def test_min_size(self):
         """ Tests if uploaded picture has minimal size """
-        self.client.post('/admin/testproject/allmodel/add/', {
+        self.client.post('/admin/tests/allmodel/add/', {
             'image': self.fixtures['100.gif']
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
-
-    def test_widget(self):
-        """
-        Tests the admin Widget
-        """
-        self.client.post('/admin/testproject/thumbnailmodel/add/', {
-            'image': self.fixtures['600x400.jpg']
-        })
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.admin.jpg')))
-
-        response = self.client.get('/admin/testproject/thumbnailmodel/1/')
-        self.assertContains(response, '<img src="/media/img/image.admin.jpg" alt="image thumbnail"/>')
