@@ -3,6 +3,7 @@ import os
 from django.db import models
 from stdimage import StdImageField
 from stdimage.utils import pre_delete_delete_callback, pre_save_delete_callback
+from stdimage.validators import MaxSizeValidator, MinSizeValidator
 
 
 def upload_to(instance, filename):
@@ -49,13 +50,17 @@ class MultipleFieldsModel(models.Model):
 
 
 class MaxSizeModel(models.Model):
-    image = StdImageField(upload_to=upload_to, max_size=(100, 100))
+    image = StdImageField(upload_to=upload_to, validators=[MaxSizeValidator(16, 16)])
+
+
+class MinSizeModel(models.Model):
+    image = StdImageField(upload_to=upload_to, validators=[MinSizeValidator(200, 200)])
 
 
 class AllModel(models.Model):
     """all previous features in one declaration"""
     image = StdImageField(upload_to=upload_to, blank=True,
-                          variations={'large': (600, 400), 'thumbnail': (100, 100, True)})
+                          variations={'large': (600, 400), 'thumbnail': (100, 100, True)}, force_min_size=True)
 
 
 post_delete.connect(pre_delete_delete_callback, sender=SimpleModel)

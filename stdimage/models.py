@@ -7,9 +7,9 @@ import os
 from django.db.models import signals
 from django.db.models.fields.files import ImageField, ImageFileDescriptor, ImageFieldFile
 from django.core.files.base import ContentFile
-from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 from PIL import Image, ImageOps
+
+from .validators import MinSizeValidator
 
 
 class StdImageFileDescriptor(ImageFileDescriptor):
@@ -111,7 +111,7 @@ class StdImageField(ImageField):
     }
 
     def __init__(self, verbose_name=None, name=None, variations={},
-                 min_size=None, max_size=None, *args, **kwargs):
+                 force_min_size=False, *args, **kwargs):
         """
         Standardized ImageField for Django
         Usage: StdImageField(upload_to='PATH', variations={'thumbnail': {"width", "height", "crop", "resample"}})
@@ -119,15 +119,14 @@ class StdImageField(ImageField):
         :rtype variations: StdImageField
         """
         self.variations = {}
-        self.min_size = min_size or [0, 0]
-        self.max_size = max_size or [float('inf'), float('inf')]
+        self.force_min_size = force_min_size
 
         for nm, prm in list(variations.items()):
             self.add_variation(nm, prm)
 
-        if self.variations:
-            self.min_size[0] = max(self.variations.values(), key=lambda x: x["width"])["width"]
-            self.min_size[1] = max(self.variations.values(), key=lambda x: x["height"])["height"]
+        if self.variations and self.force_min_size:
+            self.min_size = max(self.variations.values(), key=lambda x: x["width"])["width"],\
+                            max(self.variations.values(), key=lambda x: x["height"])["height"]
 
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
@@ -165,17 +164,8 @@ class StdImageField(ImageField):
 
     def validate(self, value, model_instance):
         super(StdImageField, self).validate(value, model_instance)
-        value.seek(0)
-        stream = BytesIO(value.read())
-        img = Image.open(stream)
-        if img.size[0] < self.min_size[0] or img.size[1] < self.min_size[1]:
-            raise ValidationError(
-                _('The image you uploaded is too small. The required minimal resolution is: %sx%s px.') %
-                (self.min_size[0], self.min_size[1]))
-        elif img.size[0] > self.max_size[0] or img.size[1] > self.max_size[1]:
-            raise ValidationError(
-                _('The image you uploaded is too large. The required maximal resolution is: %sx%s px.') %
-                (self.max_size[0], self.max_size[1]))
+        if self.force_min_size:
+            MinSizeValidator(self.min_size[0], self.min_size[1])(value)
 
 
 try:

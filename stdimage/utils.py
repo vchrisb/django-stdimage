@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+from __future__ import (absolute_import, unicode_literals)
+
 import os
 import uuid
-from stdimage import StdImageField
+from .models import StdImageField
 
 
 def upload_to(name, ext, path=''):
