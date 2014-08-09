@@ -1,30 +1,74 @@
 # -*- coding: utf-8 -*-
 from __future__ import (absolute_import, unicode_literals)
 
-import os
 import uuid
+from django.utils.text import slugify
+
+import os
 from .models import StdImageField
 
 
-def upload_to(name, ext, path=''):
-    return os.path.join(path, '%s.%s' % (name, ext)).lower()
+class UploadTo(object):
+    file_pattern = "%(name)s.%(ext)s"
+    path_pattern = "%(path)"
+
+    def __call__(self, instance, filename):
+        defaults = {
+            'ext': filename.rsplit('.', 1)[-1],
+            'path': filename.rsplit('/', 1)[-1],
+            'class_name': instance.__class__.__name__,
+        }
+        defaults.update(self.kwargs)
+        return os.path.join(self.path_pattern % defaults,
+                            self.file_pattern % defaults).lower()
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
 
-def upload_to_uuid(instance, filename, path=''):
-    ext = filename.rsplit('.', 1)[-1]
-    return upload_to(uuid.uuid4().hex, ext, path)
+class UploadToUUID(UploadTo):
+
+    def __init__(self, **kwargs):
+        defaults = {
+            'name': uuid.uuid4().hex,
+            'path': '',
+        }
+        defaults.update(kwargs)
+        super(UploadToUUID, self).__init__(**defaults)
 
 
-def upload_to_class_name_dir(instance, filename, name=''):
-    ext = filename.rsplit('.', 1)[-1]
-    if name == '':
-        name = filename.rsplit('/', 1)[-1]
-    class_name = instance.__class__.__name__
-    return upload_to(name, ext, class_name)
+class UploadToClassNameDir(UploadTo):
+    path_pattern = '%(class_name)'
 
 
-def upload_to_class_name_dir_uuid(instance, filename):
-    return upload_to_class_name_dir(instance, filename, uuid.uuid4().hex)
+class UploadToClassNameDirUUID(UploadToClassNameDir, UploadToUUID):
+    pass
+
+
+class UploadToAutoSlug(UploadTo):
+    file_pattern = "%(field_value)s.%(ext)s"
+
+    def __init__(self, field_name, **kwargs):
+        defaults = {
+            'field_name': field_name,
+        }
+        defaults.update(kwargs)
+        super(UploadToAutoSlug, self).__init__(**defaults)
+
+    def __call__(self, instance, filename):
+        defaults = {
+            'ext': filename.rsplit('.', 1)[-1],
+            'path': filename.rsplit('/', 1)[-1],
+            'class_name': instance.__class__.__name__,
+            'field_value': slugify(self.kwargs.get('field_name')),
+        }
+        defaults.update(self.kwargs)
+        return os.path.join(self.path_pattern % defaults,
+                            self.file_pattern % defaults).lower()
+
+
+class UploadToAutoSlugClassNameDir(UploadToClassNameDir, UploadToAutoSlug):
+    pass
 
 
 def pre_delete_delete_callback(sender, instance, **kwargs):

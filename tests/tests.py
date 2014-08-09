@@ -1,5 +1,6 @@
 # coding: utf-8
 from __future__ import (absolute_import, unicode_literals)
+from django.core.exceptions import ValidationError
 
 import os
 
@@ -9,7 +10,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from .forms import ResizeCropModelForm, MaxSizeModelForm
-from .models import SimpleModel, ResizeModel, AllModel, AdminDeleteModel, ThumbnailModel
+from .models import SimpleModel, ResizeModel, AllModel, AdminDeleteModel, ThumbnailModel, MaxSizeModel
 
 
 IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
@@ -165,6 +166,23 @@ class TestAdmin(TestStdImage):
     def test_min_size(self):
         """ Tests if uploaded picture has minimal size """
         self.client.post('/admin/tests/allmodel/add/', {
+            'image': self.fixtures['100.gif']
+        })
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
+
+
+class TestValidators(TestStdImage):
+
+    def test_max_size_validator(self):
+        self.client.post('/admin/tests/maxsizemodel/add/', {
+            'image': self.fixtures['600x400.jpg']
+        })
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.jpg')))
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.jpg')))
+
+    def test_min_size_validator(self):
+        self.client.post('/admin/tests/minsizemodel/add/', {
             'image': self.fixtures['100.gif']
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
