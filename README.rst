@@ -74,31 +74,51 @@ For using generated thumbnail in templates use "myimagefield.thumbnail". Example
 
     <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
 
-About image names
------------------
+Utils
+-----
 
-By default StdImageField stores images without modifying the file name. If you want to use more consistent file names you can use the build in upload functions.
+By default StdImageField stores images without modifying the file name.
+ If you want to use more consistent file names you can use the build in upload callables.
 Example::
 
-    from stdimage import StdImageField, upload_to_uuid, upload_to_class_name_dir, upload_to_class_name_dir_uuid
-    from functools import partial
+    from stdimage.utils import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
 
     class MyClass(models.Model)
         # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
-        image1 = StdImageField(upload_to=upload_to_class_name)
+        image1 = StdImageField(upload_to=UploadToClassNameDir())
 
         # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
-        image2 = StdImageField(upload_to=partial(upload_to_class_name, name='pic'))
+        image2 = StdImageField(upload_to=UploadToClassNameDir(name='pic'))
 
         # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
-        image3 = StdImageField(upload_to=partial(upload_to_uuid, path='images'))
+        image3 = StdImageField(upload_to=UploadToUUID(path='images'))
 
         # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
-        image4 = StdImageField(upload_to=upload_to_class_name_dir_uuid)
+        image4 = StdImageField(upload_to=UploadToClassNameDirUUID())
 
+        # Gets save to MEDIA_ROOT/images/#SLUG#.#EXT#
+        image5 = StdImageField(upload_to=UploadToAutoSlug(path='images))
 
-You can restrict the upload dimension of images using `min_size` and `max_size`. Both arguments accept a (width, height) tuple. By default, the minimum resolution is set to the biggest variation.
-CAUTION: The `max_size` should be used with caution. As storage isn't expensive, you shouldn't restrict upload dimensions. If you seek prevent users form overflowing your memory you should restrict the HTTP upload body size.
+        # Gets save to MEDIA_ROOT/myclass/#SLUG#.#EXT#
+        image6 = StdImageField(upload_to=UploadToAutoSlugClassNameDir())
+
+Validators
+----------
+The `StdImageField` doesn't implement any size validation. Validation can be specified using the validator attribute
+ and using a set of validators shipped with this package.
+Validators can be used for both Forms and Models.
+
+Example::
+
+    from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
+
+    class MyClass(models.Model)
+        image1 = StdImageField(validators=MinSizeValidator(800, 600))
+        image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
+
+CAUTION: The MaxSizeValidator should be used with caution.
+ As storage isn't expensive, you shouldn't restrict upload dimensions.
+ If you seek prevent users form overflowing your memory you should restrict the HTTP upload body size.
 
 Deleting images
 ---------------

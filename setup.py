@@ -22,14 +22,14 @@ class PyTest(Command):
 
 setup(
     name='django-stdimage',
-    version='0.7.0',
+    version='1.0.0',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
     author_email='info@johanneshoppe.com',
     license='MIT License',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Topic :: Multimedia :: Graphics :: Graphics Conversion',
@@ -38,6 +38,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Software Development',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
     ],
     packages=['stdimage'],
     include_package_data=True,
