@@ -27,7 +27,7 @@ setup(
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
     author_email='info@johanneshoppe.com',
-    license='MIT License',
+    license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
