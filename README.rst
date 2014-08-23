@@ -1,8 +1,8 @@
 .. image:: https://travis-ci.org/codingjoe/django-stdimage.png?branch=master
     :target: https://travis-ci.org/codingjoe/django-stdimage
 
-.. image:: https://coveralls.io/repos/coagulant/django-stdimage/badge.png?branch=master
-    :target: https://coveralls.io/r/coagulant/django-stdimage
+.. image:: https://coveralls.io/repos/codingjoe/django-stdimage/badge.png?branch=master
+    :target: https://coveralls.io/r/codingjoe/django-stdimage
 
 .. image:: https://pypip.in/v/django-stdimage/badge.png
     :target: https://crate.io/packages/django-stdimage
