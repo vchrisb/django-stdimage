@@ -10,12 +10,13 @@ from .models import StdImageField
 
 class UploadTo(object):
     file_pattern = "%(name)s.%(ext)s"
-    path_pattern = "%(path)"
+    path_pattern = "%(path)s"
 
     def __call__(self, instance, filename):
         defaults = {
-            'ext': filename.rsplit('.', 1)[-1],
-            'path': filename.rsplit('/', 1)[-1],
+            'ext': filename.rsplit('.', 1)[1],
+            'name': filename.rsplit('.', 1)[0],
+            'path': filename.rsplit('/', 1)[0],
             'class_name': instance.__class__.__name__,
         }
         defaults.update(self.kwargs)
@@ -29,16 +30,14 @@ class UploadTo(object):
 class UploadToUUID(UploadTo):
 
     def __init__(self, **kwargs):
-        defaults = {
+        kwargs.update({
             'name': uuid.uuid4().hex,
-            'path': '',
-        }
-        defaults.update(kwargs)
-        super(UploadToUUID, self).__init__(**defaults)
+        })
+        super(UploadToUUID, self).__init__(**kwargs)
 
 
 class UploadToClassNameDir(UploadTo):
-    path_pattern = '%(class_name)'
+    path_pattern = '%(class_name)s'
 
 
 class UploadToClassNameDirUUID(UploadToClassNameDir, UploadToUUID):
@@ -46,25 +45,17 @@ class UploadToClassNameDirUUID(UploadToClassNameDir, UploadToUUID):
 
 
 class UploadToAutoSlug(UploadTo):
-    file_pattern = "%(field_value)s.%(ext)s"
 
-    def __init__(self, field_name, **kwargs):
-        defaults = {
-            'field_name': field_name,
-        }
-        defaults.update(kwargs)
-        super(UploadToAutoSlug, self).__init__(**defaults)
+    def __init__(self, populate_from, **kwargs):
+        self.populate_from = populate_from
+        super(UploadToAutoSlug, self).__init__(**kwargs)
 
     def __call__(self, instance, filename):
-        defaults = {
-            'ext': filename.rsplit('.', 1)[-1],
-            'path': filename.rsplit('/', 1)[-1],
-            'class_name': instance.__class__.__name__,
-            'field_value': slugify(self.kwargs.get('field_name')),
-        }
-        defaults.update(self.kwargs)
-        return os.path.join(self.path_pattern % defaults,
-                            self.file_pattern % defaults).lower()
+        field_value = getattr(instance, self.populate_from)
+        self.kwargs.update({
+            'name': slugify(field_value),
+        })
+        return super(UploadToAutoSlug, self).__call__(instance, filename)
 
 
 class UploadToAutoSlugClassNameDir(UploadToClassNameDir, UploadToAutoSlug):

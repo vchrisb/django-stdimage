@@ -63,7 +63,7 @@ class StdImageFieldFile(ImageFieldFile):
                     img.thumbnail((variation['width'], variation['height']), resample=resample)
             variation_name = self.get_variation_name(self.name, variation['name'])
             with BytesIO() as file_buffer:
-                format = self.get_file_extension(name).lower().replace('jpg', 'jpeg')
+                format = self.get_file_extension(name).upper().replace('JPG', 'JPEG')
                 img.save(file_buffer, format)
                 if self.storage.exists(variation_name):
                     self.storage.delete(variation_name)
@@ -136,8 +136,6 @@ class StdImageField(ImageField):
         super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
 
     def add_variation(self, name, params):
-        if params is None:
-            return
         variation = self.def_variation.copy()
         if isinstance(params, (list, tuple)):
             variation.update(dict(zip(("width", "height", "crop"), params)))

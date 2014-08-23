@@ -14,7 +14,7 @@ def module_exists(module_name):
 
 from django.conf import settings
 
-TEST_MEDIA_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'tests', 'media')
+TEST_MEDIA_ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tests', 'media')
 
 if not settings.configured:
     settings.configure(
