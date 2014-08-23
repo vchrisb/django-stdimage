@@ -1,11 +1,27 @@
-.. image:: https://travis-ci.org/codingjoe/django-stdimage.png
-  :target: https://travis-ci.org/codingjoe/django-stdimage
+.. image:: https://travis-ci.org/codingjoe/django-stdimage.png?branch=master
+    :target: https://travis-ci.org/codingjoe/django-stdimage
+
+.. image:: https://coveralls.io/repos/coagulant/coveralls-python/badge.png?branch=master
+    :target: https://coveralls.io/r/coagulant/coveralls-python
+
 .. image:: https://pypip.in/v/django-stdimage/badge.png
-  :target: https://crate.io/packages/django-stdimage
+    :target: https://crate.io/packages/django-stdimage
+
+.. image:: https://pypip.in/status/django-stdimage/badge.svg
+    :target: https://pypi.python.org/pypi/django-stdimage/
+    :alt: Development Status
+
+.. image:: https://pypip.in/py_versions/django-stdimage/badge.svg
+    :target: https://pypi.python.org/pypi/django-stdimage/
+    :alt: Supported Python versions
+
 .. image:: https://pypip.in/d/django-stdimage/badge.png
-  :target: https://crate.io/packages/django-stdimage
+    :target: https://crate.io/packages/django-stdimage/
+    :alt: Downloads
+
 .. image:: https://pypip.in/license/django-stdimage/badge.png
-  :target: https://pypi.python.org/pypi/django-stdimage/
+    :target: https://pypi.python.org/pypi/django-stdimage/
+    :alt: License
 
 Django Standarized Image Field
 ==============================
