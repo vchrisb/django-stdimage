@@ -122,10 +122,17 @@ class TestUtils(TestStdImage):
         obj.delete()
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
-    def test_pre_save_delete_callback(self):
+    def test_pre_save_delete_callback_clear(self):
         AdminDeleteModel.objects.create(image=self.fixtures['100.gif'])
         self.client.post('/admin/tests/admindeletemodel/1/', {
             'image-clear': 'checked',
+        })
+        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+
+    def test_pre_save_delete_callback_new(self):
+        AdminDeleteModel.objects.create(image=self.fixtures['100.gif'])
+        self.client.post('/admin/tests/admindeletemodel/1/', {
+            'image': self.fixtures['600x400.jpg'],
         })
         self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
 
