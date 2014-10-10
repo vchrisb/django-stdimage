@@ -29,11 +29,11 @@ class UploadTo(object):
 
 class UploadToUUID(UploadTo):
 
-    def __init__(self, **kwargs):
-        kwargs.update({
+    def __call__(self, instance, filename):
+        self.kwargs.update({
             'name': uuid.uuid4().hex,
         })
-        super(UploadToUUID, self).__init__(**kwargs)
+        return super(UploadToUUID, self).__call__(instance, filename)
 
 
 class UploadToClassNameDir(UploadTo):
