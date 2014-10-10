@@ -185,11 +185,6 @@ class StdImageField(ImageField):
 try:
     from south.modelsinspector import add_introspection_rules
 
-    add_introspection_rules(
-        [([StdImageField], [], {
-            "variations": ["variations", {"default": None}],
-        },), ],
-        ["^stdimage\.models\.StdImageField"]
-    )
+    add_introspection_rules([], ["^stdimage\.models\.StdImageField"])
 except ImportError:
     pass
