@@ -148,6 +148,16 @@ Deleting images
  Warning: You should not use the singal callbacks in production. They may result in data loss.
 
 
+Re-rendering variations
+ You might want to add new variations to a field. That means you need to render new variations for missing fields.
+ This can be accomplished using a management command.::
+
+    python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
+
+ The `replace` option will replace all existing files.
+ There is currently a memory leak, that's why you should avoid using the `replace` option in cron jobs.
+
+
 Testing
 -------
 To run the tests simply run ``python setup.py test``

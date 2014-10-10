@@ -2,6 +2,7 @@
 from __future__ import (absolute_import, unicode_literals)
 
 from io import BytesIO
+import logging
 
 import os
 from django.db.models import signals
@@ -10,6 +11,9 @@ from django.core.files.base import ContentFile
 from PIL import Image, ImageOps
 
 from .validators import MinSizeValidator
+
+
+logger = logging.getLogger()
 
 
 class StdImageFileDescriptor(ImageFileDescriptor):
@@ -38,10 +42,19 @@ class StdImageFieldFile(ImageFieldFile):
     def is_smaller(img, variation):
         return img.size[0] > variation['width'] or img.size[1] > variation['height']
 
-    def render_and_save_variation(self, name, content, variation):
+    def render_and_save_variation(self, name, content, variation, replace=False):
         """
         Renders the image variations and saves them to the storage
         """
+        variation_name = self.get_variation_name(self.name, variation['name'])
+        if self.storage.exists(variation_name):
+            if replace:
+                self.storage.delete(variation_name)
+                logger.info('File "{}" already exists and has been replaced.')
+            else:
+                logger.info('File "{}" already exists.')
+                return variation_name
+
         content.seek(0)
 
         resample = variation['resample']
@@ -61,12 +74,10 @@ class StdImageFieldFile(ImageFieldFile):
                     img = ImageOps.fit(img, (variation['width'], variation['height']), method=resample)
                 else:
                     img.thumbnail((variation['width'], variation['height']), resample=resample)
-            variation_name = self.get_variation_name(self.name, variation['name'])
+
             with BytesIO() as file_buffer:
                 format = self.get_file_extension(name).upper().replace('JPG', 'JPEG')
                 img.save(file_buffer, format)
-                if self.storage.exists(variation_name):
-                    self.storage.delete(variation_name)
                 self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
         return variation_name
 
