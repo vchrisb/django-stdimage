@@ -22,7 +22,7 @@ class PyTest(Command):
 
 setup(
     name='django-stdimage',
-    version='1.0.7',
+    version='1.1.0',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
@@ -42,16 +42,15 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ],
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests", ".egg-info"]),
     include_package_data=True,
     requires=[
-        'Django (>=1.5)',
         'Pillow (>=2.5)',
         'progressbar (==2.2)',
     ],
     install_requires=[
-        'django>=1.5',
         'pillow>=2.5',
         'progressbar==2.2',
     ],

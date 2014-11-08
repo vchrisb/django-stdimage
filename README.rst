@@ -30,6 +30,7 @@ Django Field that implement the following features:
 
 * Django-Storages compatible (S3)
 * Python 2 & 3 support
+* Django 1.5 and later support
 * Resize images to different sizes
 * Access thumbnails on model level, no template tags required
 * Preserves original image
