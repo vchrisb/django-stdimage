@@ -8,21 +8,26 @@ import uuid
 
 class UUID4Monkey(object):
     hex = '653d1c6863404b9689b75fa930c9d0a0'
-uuid.__dict__['uuid4'] = lambda: UUID4Monkey()
 
+
+uuid.__dict__['uuid4'] = lambda: UUID4Monkey()
 
 from django.conf import settings
 from django.core.files import File
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .models import SimpleModel, ResizeModel, AdminDeleteModel, ThumbnailModel, ResizeCropModel, \
-    UploadToAutoSlugClassNameDirModel, UploadToUUIDModel
+from .models import SimpleModel, ResizeModel, AdminDeleteModel,\
+    ThumbnailModel, ResizeCropModel, AutoSlugClassNameDirModel,\
+    UUIDModel
 
 
 IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
 
-FIXTURE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+FIXTURE_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'fixtures'
+)
 
 
 class TestStdImage(TestCase):
@@ -35,7 +40,8 @@ class TestStdImage(TestCase):
         for fixture_filename in fixture_paths:
             fixture_path = os.path.join(FIXTURE_DIR, fixture_filename)
             if os.path.isfile(fixture_path):
-                self.fixtures[fixture_filename] = File(open(fixture_path, 'rb'))
+                f = open(fixture_path, 'rb')
+                self.fixtures[fixture_filename] = File(f)
 
     def tearDown(self):
         """Close all open fixtures and delete everything from media"""
@@ -67,27 +73,40 @@ class TestModel(TestStdImage):
 
     def test_variations(self):
         """Adds image and checks filesystem as well as width and height."""
-        instance = ResizeModel.objects.create(image=self.fixtures['600x400.jpg'])
+        instance = ResizeModel.objects.create(
+            image=self.fixtures['600x400.jpg']
+        )
 
         source_file = os.path.join(FIXTURE_DIR, '600x400.jpg')
 
         self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.jpg')))
         self.assertEqual(instance.image.width, 600)
         self.assertEqual(instance.image.height, 400)
-        self.assertTrue(filecmp.cmp(source_file, os.path.join(IMG_DIR, 'image.jpg')))
+        path = os.path.join(IMG_DIR, 'image.jpg')
+        assert filecmp.cmp(source_file, path)
 
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.medium.jpg')))
+        path = os.path.join(IMG_DIR, 'image.medium.jpg')
+        assert os.path.exists(path)
         self.assertEqual(instance.image.medium.width, 400)
         self.assertLessEqual(instance.image.medium.height, 400)
-        self.assertFalse(filecmp.cmp(source_file, os.path.join(IMG_DIR, 'image.medium.jpg')))
+        self.assertFalse(filecmp.cmp(
+            source_file,
+            os.path.join(IMG_DIR, 'image.medium.jpg')))
 
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.jpg')))
+        self.assertTrue(os.path.exists(
+            os.path.join(IMG_DIR, 'image.thumbnail.jpg'))
+        )
         self.assertEqual(instance.image.thumbnail.width, 100)
         self.assertLessEqual(instance.image.thumbnail.height, 75)
-        self.assertFalse(filecmp.cmp(source_file, os.path.join(IMG_DIR, 'image.thumbnail.jpg')))
+        self.assertFalse(filecmp.cmp(
+            source_file,
+            os.path.join(IMG_DIR, 'image.thumbnail.jpg'))
+        )
 
     def test_cropping(self):
-        instance = ResizeCropModel.objects.create(image=self.fixtures['600x400.jpg'])
+        instance = ResizeCropModel.objects.create(
+            image=self.fixtures['600x400.jpg']
+        )
         self.assertEqual(instance.image.thumbnail.width, 150)
         self.assertEqual(instance.image.thumbnail.height, 150)
 
@@ -96,57 +115,86 @@ class TestModel(TestStdImage):
         target_file = os.path.join(IMG_DIR, 'image.thumbnail.jpg')
         os.mkdir(IMG_DIR)
         shutil.copyfile(source_file, target_file)
-        ResizeModel.objects.create(image=self.fixtures['600x400.jpg'])
-        self.assertTrue(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.jpg')))
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail_1.jpg')))
+        ResizeModel.objects.create(
+            image=self.fixtures['600x400.jpg']
+        )
+        thumbnail_path = os.path.join(IMG_DIR, 'image.thumbnail.jpg')
+        assert os.path.exists(thumbnail_path)
+        thumbnail_path = os.path.join(IMG_DIR, 'image.thumbnail_1.jpg')
+        assert not os.path.exists(thumbnail_path)
 
     def test_delete_thumbnail(self):
         """Delete an image with thumbnail"""
-        obj = ThumbnailModel.objects.create(image=self.fixtures['100.gif'])
+        obj = ThumbnailModel.objects.create(
+            image=self.fixtures['100.gif']
+        )
         obj.image.delete()
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.thumbnail.gif')))
+        path = os.path.join(IMG_DIR, 'image.gif')
+        assert not os.path.exists(path)
+
+        path = os.path.join(IMG_DIR, 'image.thumbnail.gif')
+        assert not os.path.exists(path)
 
     def test_fore_min_size(self):
         self.client.post('/admin/tests/forceminsizemodel/add/', {
             'image': self.fixtures['100.gif'],
         })
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        path = os.path.join(IMG_DIR, 'image.gif')
+        assert not os.path.exists(path)
 
 
 class TestUtils(TestStdImage):
     """Tests Utils"""
 
     def test_deletion_singnal_receiver(self):
-        obj = SimpleModel.objects.create(image=self.fixtures['100.gif'])
+        obj = SimpleModel.objects.create(
+            image=self.fixtures['100.gif']
+        )
         obj.delete()
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(
+            os.path.exists(os.path.join(IMG_DIR, 'image.gif'))
+        )
 
     def test_pre_save_delete_callback_clear(self):
-        AdminDeleteModel.objects.create(image=self.fixtures['100.gif'])
+        AdminDeleteModel.objects.create(
+            image=self.fixtures['100.gif']
+        )
         self.client.post('/admin/tests/admindeletemodel/1/', {
             'image-clear': 'checked',
         })
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(
+            os.path.exists(os.path.join(IMG_DIR, 'image.gif'))
+        )
 
     def test_pre_save_delete_callback_new(self):
-        AdminDeleteModel.objects.create(image=self.fixtures['100.gif'])
+        AdminDeleteModel.objects.create(
+            image=self.fixtures['100.gif']
+        )
         self.client.post('/admin/tests/admindeletemodel/1/', {
             'image': self.fixtures['600x400.jpg'],
         })
-        self.assertFalse(os.path.exists(os.path.join(IMG_DIR, 'image.gif')))
+        self.assertFalse(
+            os.path.exists(os.path.join(IMG_DIR, 'image.gif'))
+        )
 
     def test_upload_to_auto_slug_class_name_dir(self):
-        UploadToAutoSlugClassNameDirModel.objects.create(
+        AutoSlugClassNameDirModel.objects.create(
             name='foo bar',
             image=self.fixtures['100.gif']
         )
-        file_path = os.path.join(settings.MEDIA_ROOT, 'uploadtoautoslugclassnamedirmodel', 'foo-bar.gif')
+        file_path = os.path.join(
+            settings.MEDIA_ROOT,
+            'autoslugclassnamedirmodel',
+            'foo-bar.gif'
+        )
         self.assertTrue(os.path.exists(file_path))
 
     def test_upload_to_uuid(self):
-        UploadToUUIDModel.objects.create(image=self.fixtures['100.gif'])
-        file_path = os.path.join(IMG_DIR, '653d1c6863404b9689b75fa930c9d0a0.gif')
+        UUIDModel.objects.create(image=self.fixtures['100.gif'])
+        file_path = os.path.join(
+            IMG_DIR,
+            '653d1c6863404b9689b75fa930c9d0a0.gif'
+        )
         self.assertTrue(os.path.exists(file_path))
 
 

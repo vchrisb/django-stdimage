@@ -9,7 +9,9 @@ import progressbar
 
 class MemoryUsageWidget(progressbar.ProgressBarWidget):
     def update(self, pbar):
-        return 'RAM: {:10.1f} MB'.format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024)
+        return 'RAM: {:10.1f} MB'.format(
+            resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+        )
 
 
 class CurrentInstanceWidget(progressbar.ProgressBarWidgetHFill):
@@ -58,7 +60,12 @@ class Command(BaseCommand):
                 prog.instance = instance
                 prog.update(i)
                 for name, variation in field.variations.items():
-                    field_file.render_and_save_variation(field_file.name, field_file, variation, replace)
+                    field_file.render_and_save_variation(
+                        field_file.name,
+                        field_file,
+                        variation,
+                        replace
+                    )
                 field_file.close()
                 i += 1
             prog.finish()

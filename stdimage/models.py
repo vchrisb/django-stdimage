@@ -3,10 +3,11 @@ from __future__ import (absolute_import, unicode_literals)
 
 from io import BytesIO
 import logging
-
 import os
+
 from django.db.models import signals
-from django.db.models.fields.files import ImageField, ImageFileDescriptor, ImageFieldFile
+from django.db.models.fields.files import ImageField, ImageFileDescriptor, \
+    ImageFieldFile
 from django.core.files.base import ContentFile
 from PIL import Image, ImageOps
 
@@ -40,9 +41,11 @@ class StdImageFieldFile(ImageFieldFile):
 
     @staticmethod
     def is_smaller(img, variation):
-        return img.size[0] > variation['width'] or img.size[1] > variation['height']
+        return img.size[0] > variation['width'] \
+            or img.size[1] > variation['height']
 
-    def render_and_save_variation(self, name, content, variation, replace=False):
+    def render_and_save_variation(self, name, content, variation,
+                                  replace=False):
         """
         Renders the image variations and saves them to the storage
         """
@@ -63,33 +66,53 @@ class StdImageFieldFile(ImageFieldFile):
 
             if self.is_smaller(img, variation):
                 factor = 1
-                while (img.size[0] / factor > 2 * variation['width'] and
-                                       img.size[1] * 2 / factor > 2 * variation['height']):
+                while (img.size[0] / factor
+                        > 2 * variation['width']
+                       and img.size[1] * 2 / factor
+                        > 2 * variation['height']):
                     factor *= 2
                 if factor > 1:
-                    img.thumbnail((int(img.size[0] / factor),
-                                   int(img.size[1] / factor)), resample=resample)
+                    img.thumbnail(
+                        (int(img.size[0] / factor),
+                         int(img.size[1] / factor)),
+                        resample=resample
+                    )
 
                 if variation['crop']:
-                    img = ImageOps.fit(img, (variation['width'], variation['height']), method=resample)
+                    img = ImageOps.fit(
+                        img,
+                        (variation['width'], variation['height']),
+                        method=resample
+                    )
                 else:
-                    img.thumbnail((variation['width'], variation['height']), resample=resample)
+                    img.thumbnail(
+                        (variation['width'], variation['height']),
+                        resample=resample
+                    )
 
             with BytesIO() as file_buffer:
-                format = self.get_file_extension(name).upper().replace('JPG', 'JPEG')
-                img.save(file_buffer, format)
-                self.storage.save(variation_name, ContentFile(file_buffer.getvalue()))
+                ext = self.get_file_extension(name)
+                file_format = ext.upper().replace('JPG', 'JPEG')
+                img.save(file_buffer, file_format)
+                f = ContentFile(file_buffer.getvalue())
+                self.storage.save(variation_name, f)
         return variation_name
 
     @classmethod
     def get_variation_name(cls, file_name, variation_name):
         """
-        Returns the variation file name based on the model it's field and it's variation
+        Returns the variation file name based on the model
+        it's field and it's variation.
         """
         ext = cls.get_file_extension(file_name)
         path = file_name.rsplit('/', 1)[0]
         file_name = file_name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
-        return os.path.join(path, '%s.%s.%s' % (file_name, variation_name, ext))
+        file_name = '{file_name}.{variation_name}.{extension}'.format(**{
+            'file_name': file_name,
+            'variation_name': variation_name,
+            'extension': ext,
+        })
+        return os.path.join(path, file_name)
 
     @staticmethod
     def get_file_extension(name):
@@ -126,14 +149,17 @@ class StdImageField(ImageField):
         'resample': Image.ANTIALIAS
     }
 
-    def __init__(self, verbose_name=None, name=None, variations={},
+    def __init__(self, verbose_name=None, name=None, variations=None,
                  force_min_size=False, *args, **kwargs):
         """
         Standardized ImageField for Django
-        Usage: StdImageField(upload_to='PATH', variations={'thumbnail': {"width", "height", "crop", "resample"}})
+        Usage: StdImageField(upload_to='PATH',
+         variations={'thumbnail': {"width", "height", "crop", "resample"}})
         :param variations: size variations of the image
         :rtype variations: StdImageField
         """
+        if not variations:
+            variations = {}
         self.variations = {}
         self.force_min_size = force_min_size
 
@@ -141,10 +167,15 @@ class StdImageField(ImageField):
             self.add_variation(nm, prm)
 
         if self.variations and self.force_min_size:
-            self.min_size = max(self.variations.values(), key=lambda x: x["width"])["width"],\
-                            max(self.variations.values(), key=lambda x: x["height"])["height"]
+            self.min_size = (
+                max(self.variations.values(),
+                    key=lambda x: x["width"])["width"],
+                max(self.variations.values(),
+                    key=lambda x: x["height"])["height"]
+            )
 
-        super(StdImageField, self).__init__(verbose_name, name, *args, **kwargs)
+        super(StdImageField, self).__init__(verbose_name, name,
+                                            *args, **kwargs)
 
     def add_variation(self, name, params):
         variation = self.def_variation.copy()
@@ -167,8 +198,13 @@ class StdImageField(ImageField):
             field = getattr(instance, self.name)
             if field._committed:
                 for name, variation in list(self.variations.items()):
-                    variation_name = self.attr_class.get_variation_name(field.name, variation['name'])
-                    variation_field = ImageFieldFile(instance, self, variation_name)
+                    variation_name = self.attr_class.get_variation_name(
+                        field.name,
+                        variation['name']
+                    )
+                    variation_field = ImageFieldFile(instance,
+                                                     self,
+                                                     variation_name)
                     setattr(field, name, variation_field)
 
     def contribute_to_class(self, cls, name):

@@ -77,4 +77,3 @@ def pre_save_delete_callback(sender, instance, **kwargs):
                 instance_field = getattr(instance, field.name)
                 if obj_field and obj_field != instance_field:
                     obj_field.delete(False)
-

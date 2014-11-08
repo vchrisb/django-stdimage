@@ -13,8 +13,9 @@ before_install:
   - sudo ln -s /usr/lib/x86_64-linux-gnu/libjpeg.so /usr/lib
 install:
   - pip install .
-  - pip install -q Django==$DJANGO
-  - pip install coveralls
+  - pip install Django==$DJANGO --use-mirrors
+  - pip install pytest pytest-pep8 pytest-flakes django-pytest --use-mirrors
+  - pip install coveralls --use-mirrors
 script:
   coverage run --source=stdimage runtests.py
 after_success:

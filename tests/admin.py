@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from .models import *
+from . import models
 
-admin.site.register(AdminDeleteModel)
-admin.site.register(ResizeCropModel)
-admin.site.register(ResizeModel)
-admin.site.register(SimpleModel)
-admin.site.register(ThumbnailModel)
-admin.site.register(MaxSizeModel)
-admin.site.register(MinSizeModel)
-admin.site.register(ForceMinSizeModel)
+admin.site.register(models.AdminDeleteModel)
+admin.site.register(models.ResizeCropModel)
+admin.site.register(models.ResizeModel)
+admin.site.register(models.SimpleModel)
+admin.site.register(models.ThumbnailModel)
+admin.site.register(models.MaxSizeModel)
+admin.site.register(models.MinSizeModel)
+admin.site.register(models.ForceMinSizeModel)
