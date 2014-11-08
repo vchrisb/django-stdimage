@@ -160,8 +160,11 @@ class StdImageField(ImageField):
         """
         if not variations:
             variations = {}
-        self.variations = {}
+        if not isinstance(variations, dict):
+            raise TypeError('"variations" must be of type dict.')
+        self._variations = variations
         self.force_min_size = force_min_size
+        self.variations = {}
 
         for nm, prm in list(variations.items()):
             self.add_variation(nm, prm)
@@ -216,6 +219,14 @@ class StdImageField(ImageField):
         super(StdImageField, self).validate(value, model_instance)
         if self.force_min_size:
             MinSizeValidator(self.min_size[0], self.min_size[1])(value)
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(StdImageField, self).deconstruct()
+        if self._variations:
+            kwargs['variations'] = self._variations
+        if self.force_min_size:
+            kwargs['force_min_size'] = self.force_min_size
+        return name, path, args, kwargs
 
 
 try:

@@ -23,8 +23,13 @@ class UploadTo(object):
         return os.path.join(self.path_pattern % defaults,
                             self.file_pattern % defaults).lower()
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.kwargs = kwargs
+        self.args = args
+
+    def deconstruct(self):
+        path = 'stdimage.utils.{}'.format(self.__class__.__name__)
+        return path, self.args, self.kwargs
 
 
 class UploadToUUID(UploadTo):
@@ -48,7 +53,7 @@ class UploadToAutoSlug(UploadTo):
 
     def __init__(self, populate_from, **kwargs):
         self.populate_from = populate_from
-        super(UploadToAutoSlug, self).__init__(**kwargs)
+        super(UploadToAutoSlug, self).__init__(populate_from, **kwargs)
 
     def __call__(self, instance, filename):
         field_value = getattr(instance, self.populate_from)
