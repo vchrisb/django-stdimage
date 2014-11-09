@@ -28,7 +28,7 @@ class UploadTo(object):
         self.args = args
 
     def deconstruct(self):
-        path = 'stdimage.utils.{}'.format(self.__class__.__name__)
+        path = "%s.%s" % (self.__class__.__module__, self.__class__.__name__)
         return path, self.args, self.kwargs
 
 

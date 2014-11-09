@@ -220,14 +220,6 @@ class StdImageField(ImageField):
         if self.force_min_size:
             MinSizeValidator(self.min_size[0], self.min_size[1])(value)
 
-    def deconstruct(self):
-        name, path, args, kwargs = super(StdImageField, self).deconstruct()
-        if self._variations:
-            kwargs['variations'] = self._variations
-        if self.force_min_size:
-            kwargs['force_min_size'] = self.force_min_size
-        return name, path, args, kwargs
-
 
 try:
     from south.modelsinspector import add_introspection_rules
