@@ -63,6 +63,7 @@ class StdImageFieldFile(ImageFieldFile):
         resample = variation['resample']
 
         with Image.open(content) as img:
+            file_format = img.format
 
             if self.is_smaller(img, variation):
                 factor = 1
@@ -91,8 +92,6 @@ class StdImageFieldFile(ImageFieldFile):
                     )
 
             with BytesIO() as file_buffer:
-                ext = self.get_file_extension(name)
-                file_format = ext.upper().replace('JPG', 'JPEG')
                 img.save(file_buffer, file_format)
                 f = ContentFile(file_buffer.getvalue())
                 self.storage.save(variation_name, f)
@@ -107,7 +106,7 @@ class StdImageFieldFile(ImageFieldFile):
         ext = cls.get_file_extension(file_name)
         path = file_name.rsplit('/', 1)[0]
         file_name = file_name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
-        file_name = '{file_name}.{variation_name}.{extension}'.format(**{
+        file_name = '{file_name}.{variation_name}{extension}'.format(**{
             'file_name': file_name,
             'variation_name': variation_name,
             'extension': ext,
@@ -115,12 +114,11 @@ class StdImageFieldFile(ImageFieldFile):
         return os.path.join(path, file_name)
 
     @staticmethod
-    def get_file_extension(name):
+    def get_file_extension(filename):
         """
         Returns the file extension.
         """
-        filename_split = name.rsplit('.', 1)
-        return filename_split[-1]
+        return os.path.splitext(filename)[1].lower()
 
     def delete(self, save=True):
         self.delete_variations()

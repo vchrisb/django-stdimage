@@ -22,7 +22,7 @@ class PyTest(Command):
 
 setup(
     name='django-stdimage',
-    version='1.1.2',
+    version='1.1.3',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
