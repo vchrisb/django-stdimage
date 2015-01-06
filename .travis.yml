@@ -9,14 +9,14 @@ python:
   - "pypy"
   - "pypy3"
 env:
-  - DJANGO=1.5.5
-  - DJANGO=1.6.8
-  - DJANGO=1.7.1
+  - DJANGO=1.5.12
+  - DJANGO=1.6.9
+  - DJANGO=1.7.2
 
 matrix:
   exclude:
     - python: "2.6"
-      env: DJANGO=1.7.1
+      env: DJANGO=1.7.2
 install:
   - pip install .
   - pip install Django==$DJANGO --use-mirrors
