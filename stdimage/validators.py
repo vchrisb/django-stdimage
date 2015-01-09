@@ -17,7 +17,10 @@ class BaseSizeValidator(BaseValidator):
     def __call__(self, value):
         cleaned = self.clean(value)
         if self.compare(cleaned, self.limit_value):
-            params = {'with': self.limit_value[0], 'height': self.limit_value[1]}
+            params = {
+                'with': self.limit_value[0],
+                'height': self.limit_value[1],
+            }
             raise ValidationError(self.message, code=self.code, params=params)
 
     @staticmethod
