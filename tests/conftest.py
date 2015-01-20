@@ -1,5 +1,9 @@
 import os
+from PIL import Image
 from django import conf
+import io
+from django.core.files.uploadedfile import SimpleUploadedFile
+import pytest
 
 
 def pytest_configure():
@@ -18,3 +22,21 @@ def pytest_configure():
     from django.db import connection
 
     connection.creation.create_test_db()
+
+
+@pytest.fixture
+def imagedata():
+    img = Image.new('RGB', (250, 250), (255, 55, 255))
+
+    output = io.BytesIO()
+    img.save(output, format='JPEG')
+
+    return output
+
+
+@pytest.fixture
+def image_upload_file(imagedata):
+    return SimpleUploadedFile(
+        'testfile.jpg',
+        imagedata.getvalue()
+    )
