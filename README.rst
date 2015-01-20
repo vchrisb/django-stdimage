@@ -4,6 +4,9 @@
 .. image:: https://coveralls.io/repos/codingjoe/django-stdimage/badge.png?branch=master
     :target: https://coveralls.io/r/codingjoe/django-stdimage
 
+.. image:: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/badges/quality-score.png?b=master
+    :target: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/?branch=master
+
 .. image:: https://pypip.in/v/django-stdimage/badge.png
     :target: https://crate.io/packages/django-stdimage
 
