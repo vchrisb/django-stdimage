@@ -7,16 +7,16 @@ from django.db.models import get_model
 import progressbar
 
 
-class MemoryUsageWidget(progressbar.ProgressBarWidget):
+class MemoryUsageWidget(progressbar.widgets.Widget):
     def update(self, pbar):
-        return 'RAM: {:10.1f} MB'.format(
+        return 'RAM: {0:10.1f} MB'.format(
             resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
         )
 
 
-class CurrentInstanceWidget(progressbar.ProgressBarWidgetHFill):
+class CurrentInstanceWidget(progressbar.WidgetHFill):
     def update(self, pbar, width):
-        return 'Object: {}@pk={}'.format(pbar.instance, pbar.instance.pk)
+        return 'Object: {0}@pk={1}'.format(pbar.instance, pbar.instance.pk)
 
 
 class Command(BaseCommand):

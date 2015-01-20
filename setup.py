@@ -46,11 +46,11 @@ setup(
     include_package_data=True,
     requires=[
         'Pillow (>=2.5)',
-        'progressbar (==2.2)',
+        'progressbar2 (>=2.7)',
     ],
     install_requires=[
         'pillow>=2.5',
-        'progressbar==2.2',
+        'progressbar2>=2.7',
     ],
     cmdclass={'test': PyTest},
 )
