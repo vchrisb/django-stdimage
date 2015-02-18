@@ -2,6 +2,7 @@
 from __future__ import (absolute_import, unicode_literals)
 
 import uuid
+from django.db.models.loading import get_model
 from django.utils.text import slugify
 
 import os
@@ -82,3 +83,11 @@ def pre_save_delete_callback(sender, instance, **kwargs):
                 instance_field = getattr(instance, field.name)
                 if obj_field and obj_field != instance_field:
                     obj_field.delete(False)
+
+
+def render_variations(app_label, model_name, field_name, pk):
+    model = get_model(app_label, model_name)
+    obj = model.objects.get(pk=pk)
+    field_file = getattr(obj, field_name)
+    field_file.render_variations()
+    return False
