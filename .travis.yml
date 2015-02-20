@@ -9,19 +9,19 @@ python:
   - "pypy"
   - "pypy3"
 env:
-  - DJANGO=1.5.12
-  - DJANGO=1.6.9
-  - DJANGO=1.7.2
+  - DJANGO=">=1.5,<=1.6"
+  - DJANGO=">=1.6,<=1.7"
+  - DJANGO=">=1.7,<=1.8"
 
 matrix:
   exclude:
     - python: "2.6"
-      env: DJANGO=1.7.2
+      env: DJANGO=">=1.7,<=1.8"
 install:
   - pip install .
-  - pip install Django==$DJANGO --use-mirrors
-  - pip install pytest pytest-pep8 pytest-flakes django-pytest --use-mirrors
-  - pip install coveralls --use-mirrors
+  - pip install Django$DJANGO
+  - pip install pytest pytest-pep8 pytest-flakes django-pytest
+  - pip install coveralls
 script:
   coverage run --source=stdimage runtests.py
 after_success:

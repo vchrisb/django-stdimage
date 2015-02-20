@@ -37,9 +37,11 @@ class StdImageFieldFile(ImageFieldFile):
         super(StdImageFieldFile, self).save(name, content, save)
         render_variations = self.field.render_variations
         if callable(render_variations):
+            model_name = getattr(self.instance._meta, 'model_name',
+                                 self.instance.__class__.__name__.lower())
             render_variations = render_variations(
                 app_label=self.instance._meta.app_label,
-                model_name=self.instance._meta.model_name,
+                model_name=model_name,
                 field_name=self.field.name,
                 pk=self.instance.pk
             )
@@ -191,8 +193,8 @@ class StdImageField(ImageField):
             msg = ('"variations" expects a dict,'
                    ' but got %s') % type(variations)
             raise TypeError(msg)
-        if not (isinstance(render_variations, bool)
-                or callable(render_variations)):
+        if not (isinstance(render_variations, bool) or
+                callable(render_variations)):
             msg = ('"render_variations" excepts a boolean or callable,'
                    ' but got %s') % type(render_variations)
             raise TypeError(msg)
