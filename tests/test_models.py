@@ -17,8 +17,8 @@ from django.core.files import File
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .models import SimpleModel, ResizeModel, AdminDeleteModel,\
-    ThumbnailModel, ResizeCropModel, AutoSlugClassNameDirModel,\
+from .models import SimpleModel, ResizeModel, AdminDeleteModel, \
+    ThumbnailModel, ResizeCropModel, AutoSlugClassNameDirModel, \
     UUIDModel, ManualVariationsModel
 
 
