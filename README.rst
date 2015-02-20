@@ -152,42 +152,6 @@ Deleting images
  Warning: You should not use the singal callbacks in production. They may result in data loss.
 
 
-Async image processing
- Tools like celery allow to execute time-consuming tasks outside of the request. If you don't want
- to wait for your variations to be rendered in request, StdImage provides your the option to pass a
- async keyword and a util.
- This example is based on celery.
-
- tasks.py::
-
-    from django.db.models.loading import get_model
-    from stdimage.utils import render_variations
-
-    @app.task()
-    def process_image(app_label, model_name, field_name, pk):
-        render_variations(app_label, model_name, field_name, pk)
-        model_class = get_model(app_label, models_name)
-        obj = model_class.objects.get(pk=pk)
-        obj.processed = True
-        obj.save()
-
- models.py::
-
-    from django.db import models
-    from stdimage.models import StdImageField
-
-    def image_processor(**kwargs):
-        process_image.delay(**kwargs)
-        return False  # prevent default rendering
-
-    class AsyncImageModel(models.Model)
-         image = StdImageField(
-            upload_to=UploadToClassNameDir(),
-            render_variations=image_processor  # pass boolean or callable
-         )
-         processed = models.BooleanField(default=False)  # flag that could be used for view querysets
-
-
 Re-rendering variations
  You might want to add new variations to a field. That means you need to render new variations for missing fields.
  This can be accomplished using a management command.::

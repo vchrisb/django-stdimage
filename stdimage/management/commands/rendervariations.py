@@ -3,7 +3,7 @@ from __future__ import (absolute_import, unicode_literals)
 import resource
 
 from django.core.management import BaseCommand
-from django.db.models.loading import get_model
+from django.db.models import get_model
 import progressbar
 
 
@@ -34,10 +34,10 @@ class Command(BaseCommand):
         replace = options.get('replace')
         for route in args:
             pk = None
-            app_label, model_name, field_name = route.rsplit('.')
+            app_name, model_name, field_name = route.rsplit('.')
             if '@' in field_name:
                 field_name, pk = field_name.split('@', 1)
-            model_class = get_model(app_label, model_name)
+            model_class = get_model(app_name, model_name)
             queryset = model_class.objects \
                 .exclude(**{'%s__isnull' % field_name: True}) \
                 .exclude(**{field_name: ''}) \
@@ -60,7 +60,8 @@ class Command(BaseCommand):
                 prog.instance = instance
                 prog.update(i)
                 for name, variation in field.variations.items():
-                    field_file.render_variation(
+                    field_file.render_and_save_variation(
+                        field_file.name,
                         field_file,
                         variation,
                         replace
