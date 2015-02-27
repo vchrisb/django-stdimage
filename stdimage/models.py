@@ -67,10 +67,10 @@ class StdImageFieldFile(ImageFieldFile):
 
             if self.is_smaller(img, variation):
                 factor = 1
-                while (img.size[0] / factor
-                        > 2 * variation['width']
-                       and img.size[1] * 2 / factor
-                        > 2 * variation['height']):
+                while img.size[0] / factor \
+                        > 2 * variation['width'] \
+                        and img.size[1] * 2 / factor \
+                        > 2 * variation['height']:
                     factor *= 2
                 if factor > 1:
                     img.thumbnail(
