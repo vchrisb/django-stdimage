@@ -37,6 +37,8 @@ Django Field that implement the following features:
 * Resize images to different sizes
 * Access thumbnails on model level, no template tags required
 * Preserves original image
+* Asynchronous rendering (Celery & Co)
+* Multi threading and processing for optimum performance
 * Restrict accepted image dimensions
 * Rename files to a standardized name (using a callable upload_to)
 
@@ -165,18 +167,12 @@ Async image processing
     from stdimage.utils import render_variations
 
     @app.task()
-    def process_image(**kwargs):
-        render_variations(**kwargs)
+    def process_image(app_label, model_name, field_name, file_name):
+        render_variations(app_label, model_name, field_name, file_name)
         model_class = get_model(app_label, models_name)
-        def set_processed():
-            try:  # this could fail if the object is not yet committed
-                obj = AsyncImageModel.objects.get(**{field_name: file_name})
-                obj.processed = True
-                obj.save()
-            except:
-                time.sleep(3)
-                set_processed()
-        set_processed()
+        obj = model_class.objects.get(**{field_name: file_name})
+        obj.processed = True
+        obj.save()
 
  models.py::
 
@@ -202,7 +198,12 @@ Re-rendering variations
     python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
 
  The `replace` option will replace all existing files.
- There is currently a memory leak, that's why you should avoid using the `replace` option in cron jobs.
+
+Multi processing
+  Since version 2 stdImage supports multiprocessing.
+  Every image is rendered in separate process.
+  It not only increased performance but the garbage collection
+  and therefore the huge memory footprint from previous versions.
 
 
 Testing
