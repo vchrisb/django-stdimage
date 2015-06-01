@@ -21,7 +21,7 @@ class TestRenderVariations(object):
             ManualVariationsModel.objects.create(
                 image=image_upload_file
             ).image.thumbnail.path
-            for _ in range(1000)
+            for _ in range(100)
         ]
         assert not any([os.path.exists(f) for f in file_names])
         call_command(
