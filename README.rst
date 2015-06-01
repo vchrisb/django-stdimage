@@ -61,6 +61,7 @@ Variations
  A variation can be defined both as a tuple or a dictionary.
 
  Example::
+ .. code :: python
 
      from stdimage.models import StdImageField
 
@@ -88,7 +89,8 @@ Variations
 
  For using generated variations in templates use "myimagefield.variation_name".
  
- Example::
+ Example
+ .. code :: python
 
      <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
 
@@ -97,14 +99,15 @@ Utils
  By default StdImageField stores images without modifying the file name.
  If you want to use more consistent file names you can use the build in upload callables.
  
- Example::
+ Example
+    .. code :: python
 
      from stdimage.utils import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
 
      class MyClass(models.Model)
          # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
          image1 = StdImageField(upload_to=UploadToClassNameDir())
- 
+
          # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
          image2 = StdImageField(upload_to=UploadToClassNameDir(name='pic'))
 
@@ -125,7 +128,8 @@ Validators
  and using a set of validators shipped with this package.
  Validators can be used for both Forms and Models.
 
- Example::
+ Example
+ .. code :: python
 
     from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
 
@@ -143,12 +147,13 @@ Deleting images
  Implementing file deletion `should be done
  <http://stackoverflow.com/questions/5372934/how-do-i-get-django-admin-to-delete-files-when-i-remove-an-object-from-the-datab>`_. inside your own applications using the `post_delete` or `pre_delete` signal.
  Clearing the field if blank is true, does not delete the file. This can also be achieved using `pre_save` and `post_save` signals.
- This packages contains two signal callback methods that handle file deletion for all SdtImageFields of a model.::
+ This packages contains two signal callback methods that handle file deletion for all SdtImageFields of a model.
+ .. code :: python
 
-    from stdimage import pre_delete_delete_callback, pre_save_delete_callback
+        from stdimage import pre_delete_delete_callback, pre_save_delete_callback
 
-    post_delete.connect(pre_delete_delete_callback, sender=MyModel)
-    pre_save.connect(pre_save_delete_callback, sender=MyModel)
+        post_delete.connect(pre_delete_delete_callback, sender=MyModel)
+        pre_save.connect(pre_save_delete_callback, sender=MyModel)
 
 
  Warning: You should not use the singal callbacks in production. They may result in data loss.
@@ -161,7 +166,8 @@ Async image processing
  Note that the callback is not transaction save, but the file will be there.
  This example is based on celery.
 
- tasks.py::
+ tasks.py
+ .. code :: python
 
     from django.db.models.loading import get_model
     from stdimage.utils import render_variations
@@ -174,7 +180,8 @@ Async image processing
         obj.processed = True
         obj.save()
 
- models.py::
+ models.py
+ .. code :: python
 
     from django.db import models
     from stdimage.models import StdImageField
@@ -193,7 +200,8 @@ Async image processing
 
 Re-rendering variations
  You might want to add new variations to a field. That means you need to render new variations for missing fields.
- This can be accomplished using a management command.::
+ This can be accomplished using a management command.
+ .. code :: python
 
     python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
 
