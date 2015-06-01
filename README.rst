@@ -60,8 +60,8 @@ Variations
  Variations are specified withing a dictionary. The key will will be the attribute referencing the resized image.
  A variation can be defined both as a tuple or a dictionary.
 
- Example::
- .. code :: python
+ Example
+    .. code :: python
 
      from stdimage.models import StdImageField
 
@@ -90,7 +90,7 @@ Variations
  For using generated variations in templates use "myimagefield.variation_name".
  
  Example
- .. code :: python
+    .. code :: python
 
      <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
 
@@ -129,13 +129,14 @@ Validators
  Validators can be used for both Forms and Models.
 
  Example
- .. code :: python
+    .. code :: python
 
-    from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
+     from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
 
-    class MyClass(models.Model)
-        image1 = StdImageField(validators=MinSizeValidator(800, 600))
-        image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
+     class MyClass(models.Model)
+         image1 = StdImageField(validators=MinSizeValidator(800, 600))
+         image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
+
 
  CAUTION: The MaxSizeValidator should be used with caution.
  As storage isn't expensive, you shouldn't restrict upload dimensions.
@@ -148,15 +149,15 @@ Deleting images
  <http://stackoverflow.com/questions/5372934/how-do-i-get-django-admin-to-delete-files-when-i-remove-an-object-from-the-datab>`_. inside your own applications using the `post_delete` or `pre_delete` signal.
  Clearing the field if blank is true, does not delete the file. This can also be achieved using `pre_save` and `post_save` signals.
  This packages contains two signal callback methods that handle file deletion for all SdtImageFields of a model.
- .. code :: python
+    .. code :: python
 
-        from stdimage import pre_delete_delete_callback, pre_save_delete_callback
+     from stdimage import pre_delete_delete_callback, pre_save_delete_callback
 
-        post_delete.connect(pre_delete_delete_callback, sender=MyModel)
-        pre_save.connect(pre_save_delete_callback, sender=MyModel)
+     post_delete.connect(pre_delete_delete_callback, sender=MyModel)
+     pre_save.connect(pre_save_delete_callback, sender=MyModel)
 
 
- Warning: You should not use the singal callbacks in production. They may result in data loss.
+ Warning: You should not use the signal callbacks in production. They may result in data loss.
 
 
 Async image processing
@@ -167,43 +168,45 @@ Async image processing
  This example is based on celery.
 
  tasks.py
- .. code :: python
 
-    from django.db.models.loading import get_model
-    from stdimage.utils import render_variations
+    .. code :: python
 
-    @app.task()
-    def process_image(app_label, model_name, field_name, file_name):
-        render_variations(app_label, model_name, field_name, file_name)
-        model_class = get_model(app_label, models_name)
-        obj = model_class.objects.get(**{field_name: file_name})
-        obj.processed = True
-        obj.save()
+        from django.db.models.loading import get_model
+        from stdimage.utils import render_variations
+
+        @app.task()
+        def process_image(app_label, model_name, field_name, file_name):
+            render_variations(app_label, model_name, field_name, file_name)
+            model_class = get_model(app_label, models_name)
+            obj = model_class.objects.get(**{field_name: file_name})
+            obj.processed = True
+            obj.save()
 
  models.py
- .. code :: python
 
-    from django.db import models
-    from stdimage.models import StdImageField
+    .. code :: python
 
-    def image_processor(**kwargs):
-        process_image.delay(**kwargs)
-        return False  # prevent default rendering
+     from django.db import models
+     from stdimage.models import StdImageField
 
-    class AsyncImageModel(models.Model)
-         image = StdImageField(
-            upload_to=UploadToClassNameDir(),
-            render_variations=image_processor  # pass boolean or callable
-         )
-         processed = models.BooleanField(default=False)  # flag that could be used for view querysets
+     def image_processor(**kwargs):
+         process_image.delay(**kwargs)
+         return False  # prevent default rendering
+
+     class AsyncImageModel(models.Model)
+          image = StdImageField(
+             upload_to=UploadToClassNameDir(),
+             render_variations=image_processor  # pass boolean or callable
+          )
+          processed = models.BooleanField(default=False)  # flag that could be used for view querysets
 
 
 Re-rendering variations
  You might want to add new variations to a field. That means you need to render new variations for missing fields.
  This can be accomplished using a management command.
- .. code :: python
+    .. code ::
 
-    python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
+     python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
 
  The `replace` option will replace all existing files.
 
