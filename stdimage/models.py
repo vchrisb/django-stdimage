@@ -252,11 +252,3 @@ class StdImageField(ImageField):
         super(StdImageField, self).validate(value, model_instance)
         if self.force_min_size:
             MinSizeValidator(self.min_size[0], self.min_size[1])(value)
-
-
-try:
-    from south.modelsinspector import add_introspection_rules
-
-    add_introspection_rules([], ["^stdimage\.models\.StdImageField"])
-except ImportError:
-    pass
