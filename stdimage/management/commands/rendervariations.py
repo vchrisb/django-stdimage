@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, unicode_literals)
+from __future__ import absolute_import, unicode_literals
+
 import resource
+import sys
 import traceback
 from multiprocessing import Pool, cpu_count
-import sys
 
+import progressbar
 from django.core.management import BaseCommand
 from django.db.models import get_model
-import progressbar
 
 from stdimage.utils import render_variations
-
 
 BAR = None
 

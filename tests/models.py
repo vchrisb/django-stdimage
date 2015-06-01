@@ -1,11 +1,10 @@
-from django.db.models.signals import post_delete, pre_save
 from django.db import models
+from django.db.models.signals import post_delete, pre_save
 
 from stdimage import StdImageField
-from stdimage.utils import (
-    pre_delete_delete_callback, pre_save_delete_callback,
-    UploadTo, UploadToAutoSlugClassNameDir, UploadToUUID,
-    render_variations)
+from stdimage.utils import (UploadTo, UploadToAutoSlugClassNameDir,
+                            UploadToUUID, pre_delete_delete_callback,
+                            pre_save_delete_callback, render_variations)
 from stdimage.validators import MaxSizeValidator, MinSizeValidator
 
 

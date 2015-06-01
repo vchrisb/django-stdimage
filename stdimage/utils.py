@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, unicode_literals)
+from __future__ import absolute_import, unicode_literals
 
+import os
 import uuid
+
 from django.core.files.storage import DefaultStorage
 from django.utils.text import slugify
 
-import os
 from .models import StdImageField, StdImageFieldFile
 
 

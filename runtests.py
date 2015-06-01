@@ -3017,8 +3017,8 @@ zW6FYLg8lk11J7XOWfVCVvm0F2KiNyaeKDgCPH1V7Pz8ZRkrlP2jmdAROkxdP2RJcQirjZ8kIFF/
 mH1szWdxTVmKQB+pisiXvm43FLwGlW0kHFWj8Pfe+/9+GP1/axf19w==
 """
 
-import sys
 import base64
+import sys
 import zlib
 
 class DictImporter(object):

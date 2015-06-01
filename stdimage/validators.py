@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, unicode_literals)
+from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
-from PIL import Image
+
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
 from django.utils.translation import ugettext_lazy as _
+from PIL import Image
 
 
 class BaseSizeValidator(BaseValidator):

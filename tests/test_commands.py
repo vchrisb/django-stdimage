@@ -3,7 +3,7 @@ import time
 
 from django.core.management import call_command
 
-from tests.models import ThumbnailModel, ManualVariationsModel
+from tests.models import ManualVariationsModel, ThumbnailModel
 
 
 class TestRenderVariations(object):

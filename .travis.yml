@@ -15,16 +15,16 @@ env:
   - DJANGO="<1.9,>=1.8"
 
 matrix:
-  exclude:
+  allow_failures:
+    - env: DJANGO="<1.6,>=1.5"
+    - env: DJANGO="<1.7,>=1.6"
     - python: "2.6"
-      env: DJANGO="<1.8,>=1.7"
-    - python: "2.6"
-      env: DJANGO="<1.9,>=1.8"
+    - python: "3.2"
 install:
   - pip install --upgrade pip
   - pip install .
   - pip install Django$DJANGO
-  - pip install pytest pytest-pep8 pytest-flakes django-pytest
+  - pip install pytest pytest-pep8 pytest-flakes django-pytest pytest-isort
   - pip install coveralls
 script:
   coverage run --source=stdimage runtests.py

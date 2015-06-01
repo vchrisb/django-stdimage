@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-from __future__ import (absolute_import, unicode_literals)
+from __future__ import absolute_import, unicode_literals
 
-from io import BytesIO
 import logging
 import os
-from django.core.files.storage import DefaultStorage
+from io import BytesIO
 
-from django.db.models import signals
-from django.db.models.fields.files import (
-    ImageField, ImageFileDescriptor, ImageFieldFile
-)
 from django.core.files.base import ContentFile
+from django.core.files.storage import DefaultStorage
+from django.db.models import signals
+from django.db.models.fields.files import (ImageField, ImageFieldFile,
+                                           ImageFileDescriptor)
 from PIL import Image, ImageOps
 
 from .validators import MinSizeValidator
-
 
 logger = logging.getLogger()
 
