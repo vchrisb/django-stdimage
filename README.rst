@@ -63,36 +63,38 @@ Variations
  Example
     .. code :: python
 
-     from stdimage.models import StdImageField
+        from stdimage.models import StdImageField
 
-     class MyModel(models.Model):
-         # works just like django's ImageField
-         image = StdImageField(upload_to='path/to/img')
 
-         # creates a thumbnail resized to maximum size to fit a 100x75 area
-         image = StdImageField(upload_to='path/to/img', variations={'thumbnail': {'with': 100, 'height': 75}})
+        class MyModel(models.Model):
+            # works just like django's ImageField
+            image = StdImageField(upload_to='path/to/img')
 
-         # is the same as dictionary-style call
-         image = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)})
+            # creates a thumbnail resized to maximum size to fit a 100x75 area
+            image = StdImageField(upload_to='path/to/img',
+                                  variations={'thumbnail': {'with': 100, 'height': 75}})
 
-         # creates a thumbnail resized to 100x100 croping if necessary
-         image = StdImageField(upload_to='path/to/img', variations={
-            'thumbnail': {"width": 100, "height": 100, "crop":True}
-         })
+            # is the same as dictionary-style call
+            image = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)})
 
-         ## Full ammo here. Please note all the definitions below are equal
-         image = StdImageField(upload_to=upload_to, blank=True, variations={
-             'large': (600, 400),
-             'thumbnail': (100, 100, True),
-             'medium': (300, 200),
-         })
+            # creates a thumbnail resized to 100x100 croping if necessary
+            image = StdImageField(upload_to='path/to/img', variations={
+                'thumbnail': {"width": 100, "height": 100, "crop": True}
+            })
+
+            ## Full ammo here. Please note all the definitions below are equal
+            image = StdImageField(upload_to=upload_to, blank=True, variations={
+                'large': (600, 400),
+                'thumbnail': (100, 100, True),
+                'medium': (300, 200),
+            })
 
  For using generated variations in templates use "myimagefield.variation_name".
  
  Example
     .. code :: python
 
-     <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
+        <a href="{{ object.myimage.url }}"><img alt="" src="{{ object.myimage.thumbnail.url }}"/></a>
 
 
 Utils
@@ -102,26 +104,28 @@ Utils
  Example
     .. code :: python
 
-     from stdimage.utils import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
+        from stdimage.utils import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, \
+            UploadToAutoSlugClassNameDir
 
-     class MyClass(models.Model)
-         # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
-         image1 = StdImageField(upload_to=UploadToClassNameDir())
 
-         # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
-         image2 = StdImageField(upload_to=UploadToClassNameDir(name='pic'))
+        class MyClass(models.Model)
+            # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
+            image1 = StdImageField(upload_to=UploadToClassNameDir())
 
-         # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
-         image3 = StdImageField(upload_to=UploadToUUID(path='images'))
+            # Gets saved to MEDIA_ROOT/myclass/pic.#EXT#
+            image2 = StdImageField(upload_to=UploadToClassNameDir(name='pic'))
 
-         # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
-         image4 = StdImageField(upload_to=UploadToClassNameDirUUID())
+            # Gets saved to MEDIA_ROOT/images/#UUID#.#EXT#
+            image3 = StdImageField(upload_to=UploadToUUID(path='images'))
 
-         # Gets save to MEDIA_ROOT/images/#SLUG#.#EXT#
-         image5 = StdImageField(upload_to=UploadToAutoSlug(path='images))
+            # Gets saved to MEDIA_ROOT/myclass/#UUID#.#EXT#
+            image4 = StdImageField(upload_to=UploadToClassNameDirUUID())
 
-         # Gets save to MEDIA_ROOT/myclass/#SLUG#.#EXT#
-         image6 = StdImageField(upload_to=UploadToAutoSlugClassNameDir())
+            # Gets save to MEDIA_ROOT/images/#SLUG#.#EXT#
+            image5 = StdImageField(upload_to=UploadToAutoSlug(path='images))
+
+            # Gets save to MEDIA_ROOT/myclass/#SLUG#.#EXT#
+            image6 = StdImageField(upload_to=UploadToAutoSlugClassNameDir())
 
 Validators
  The `StdImageField` doesn't implement any size validation. Validation can be specified using the validator attribute
@@ -131,11 +135,12 @@ Validators
  Example
     .. code :: python
 
-     from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
+        from stdimage.validators import UploadToUUID, UploadToClassNameDir, UploadToAutoSlug, UploadToAutoSlugClassNameDir
 
-     class MyClass(models.Model)
-         image1 = StdImageField(validators=MinSizeValidator(800, 600))
-         image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
+
+        class MyClass(models.Model)
+            image1 = StdImageField(validators=MinSizeValidator(800, 600))
+            image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
 
 
  CAUTION: The MaxSizeValidator should be used with caution.
@@ -151,10 +156,11 @@ Deleting images
  This packages contains two signal callback methods that handle file deletion for all SdtImageFields of a model.
     .. code :: python
 
-     from stdimage import pre_delete_delete_callback, pre_save_delete_callback
+        from stdimage import pre_delete_delete_callback, pre_save_delete_callback
 
-     post_delete.connect(pre_delete_delete_callback, sender=MyModel)
-     pre_save.connect(pre_save_delete_callback, sender=MyModel)
+
+        post_delete.connect(pre_delete_delete_callback, sender=MyModel)
+        pre_save.connect(pre_save_delete_callback, sender=MyModel)
 
 
  Warning: You should not use the signal callbacks in production. They may result in data loss.
@@ -186,19 +192,19 @@ Async image processing
 
     .. code :: python
 
-     from django.db import models
-     from stdimage.models import StdImageField
+        from django.db import models
+        from stdimage.models import StdImageField
 
-     def image_processor(**kwargs):
-         process_image.delay(**kwargs)
-         return False  # prevent default rendering
+        def image_processor(**kwargs):
+            process_image.delay(**kwargs)
+            return False  # prevent default rendering
 
-     class AsyncImageModel(models.Model)
-          image = StdImageField(
-             upload_to=UploadToClassNameDir(),
-             render_variations=image_processor  # pass boolean or callable
-          )
-          processed = models.BooleanField(default=False)  # flag that could be used for view querysets
+        class AsyncImageModel(models.Model)
+            image = StdImageField(
+                upload_to=UploadToClassNameDir(),
+                render_variations=image_processor  # pass boolean or callable
+            )
+            processed = models.BooleanField(default=False)  # flag that could be used for view querysets
 
 
 Re-rendering variations
@@ -206,7 +212,7 @@ Re-rendering variations
  This can be accomplished using a management command.
     .. code ::
 
-     python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
+        python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
 
  The `replace` option will replace all existing files.
 
