@@ -1,3 +1,6 @@
+.. image:: https://img.shields.io/pypi/v/django-stdimage.svg
+    :target: https://pypi.python.org/pypi/django-stdimage/
+
 .. image:: https://travis-ci.org/codingjoe/django-stdimage.png?branch=master
     :target: https://travis-ci.org/codingjoe/django-stdimage
 
@@ -7,24 +10,7 @@
 .. image:: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/badges/quality-score.png?b=master
     :target: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/?branch=master
 
-.. image:: https://pypip.in/v/django-stdimage/badge.png
-    :target: https://crate.io/packages/django-stdimage
-
-.. image:: https://pypip.in/status/django-stdimage/badge.svg
-    :target: https://pypi.python.org/pypi/django-stdimage/
-    :alt: Development Status
-
-.. image:: https://pypip.in/py_versions/django-stdimage/badge.svg
-    :target: https://pypi.python.org/pypi/django-stdimage/
-    :alt: Supported Python versions
-
-.. image:: https://pypip.in/d/django-stdimage/badge.png
-    :target: https://crate.io/packages/django-stdimage/
-    :alt: Downloads
-
-.. image:: https://pypip.in/license/django-stdimage/badge.png
-    :target: https://pypi.python.org/pypi/django-stdimage/
-    :alt: License
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
 
 Django Standarized Image Field
 ==============================
