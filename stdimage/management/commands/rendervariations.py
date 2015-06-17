@@ -40,7 +40,7 @@ class Command(BaseCommand):
             model_class = get_model(app_label, model_name)
             field = model_class._meta.get_field(field_name)
 
-            queryset = model_class.objects \
+            queryset = model_class._default_manager \
                 .exclude(**{'%s__isnull' % field_name: True}) \
                 .exclude(**{field_name: ''})
             images = queryset.values_list(field_name, flat=True)

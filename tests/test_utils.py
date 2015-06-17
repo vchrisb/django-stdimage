@@ -9,7 +9,7 @@ from tests.test_models import IMG_DIR
 
 class TestRenderVariations(object):
     def test_render_variations(self, image_upload_file):
-        instance = ManualVariationsModel.objects.create(
+        instance = ManualVariationsModel.customer_manager.create(
             image=image_upload_file
         )
         path = os.path.join(IMG_DIR, 'image.thumbnail.jpg')

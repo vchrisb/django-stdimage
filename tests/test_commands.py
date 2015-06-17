@@ -8,7 +8,9 @@ from tests.models import ManualVariationsModel, ThumbnailModel
 
 class TestRenderVariations(object):
     def test_no_options(self, image_upload_file):
-        obj = ManualVariationsModel.objects.create(image=image_upload_file)
+        obj = ManualVariationsModel.customer_manager.create(
+            image=image_upload_file
+        )
         file_path = obj.image.thumbnail.path
         call_command(
             'rendervariations',
@@ -18,7 +20,7 @@ class TestRenderVariations(object):
 
     def test_multiprocessing(self, image_upload_file):
         file_names = [
-            ManualVariationsModel.objects.create(
+            ManualVariationsModel.customer_manager.create(
                 image=image_upload_file
             ).image.thumbnail.path
             for _ in range(100)

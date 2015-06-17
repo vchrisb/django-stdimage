@@ -83,7 +83,19 @@ class UUIDModel(models.Model):
     image = StdImageField(upload_to=UploadToUUID(path='img'))
 
 
-class ManualVariationsModel(models.Model):
+class CustomManager(models.Manager):
+    """Just like Django's default, but a different class."""
+    pass
+
+
+class CustomManagerModel(models.Model):
+    customer_manager = CustomManager()
+
+    class Meta:
+        abstract = True
+
+
+class ManualVariationsModel(CustomManagerModel):
     """delays creation of 150x150 thumbnails until it is called manually"""
     image = StdImageField(
         upload_to=UploadTo(name='image', path='img'),
