@@ -3,14 +3,21 @@
 
 .. image:: https://travis-ci.org/codingjoe/django-stdimage.png?branch=master
     :target: https://travis-ci.org/codingjoe/django-stdimage
+    :alt: Iontinuous Integration
+
+.. image:: https://landscape.io/github/codingjoe/django-stdimage/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/codingjoe/django-stdimage/master
+    :alt: Code Health
 
 .. image:: https://coveralls.io/repos/codingjoe/django-stdimage/badge.png?branch=master
     :target: https://coveralls.io/r/codingjoe/django-stdimage
+    :alt: Test Coverage
 
 .. image:: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/badges/quality-score.png?b=master
     :target: https://scrutinizer-ci.com/g/codingjoe/django-stdimage/?branch=master
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :alt: MIT License
 
 Django Standarized Image Field
 ==============================
