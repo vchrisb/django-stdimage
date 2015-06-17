@@ -18,10 +18,8 @@ logger = logging.getLogger()
 
 
 class StdImageFileDescriptor(ImageFileDescriptor):
-    """
-    The variation property of the field should be accessible in instance cases
 
-    """
+    """The variation property of the field is accessible in instance cases."""
 
     def __set__(self, instance, value):
         super(StdImageFileDescriptor, self).__set__(instance, value)
@@ -29,9 +27,8 @@ class StdImageFileDescriptor(ImageFileDescriptor):
 
 
 class StdImageFieldFile(ImageFieldFile):
-    """
-    Like ImageFieldFile but handles variations.
-    """
+
+    """Like ImageFieldFile but handles variations."""
 
     def save(self, name, content, save=True):
         super(StdImageFieldFile, self).save(name, content, save)
@@ -57,18 +54,14 @@ class StdImageFieldFile(ImageFieldFile):
             or img.size[1] > variation['height']
 
     def render_variations(self, replace=False):
-        """
-        Renders all image variations and saves them to the storage
-        """
-        for key, variation in self.field.variations.items():
+        """Render all image variations and saves them to the storage."""
+        for _, variation in self.field.variations.items():
             self.render_variation(self.name, variation, replace, self.storage)
 
     @classmethod
     def render_variation(cls, file_name, variation, replace=False,
                          storage=DefaultStorage()):
-        """
-        Renders an image variation and saves it to the storage
-        """
+        """Render an image variation and saves it to the storage."""
         variation_name = cls.get_variation_name(file_name, variation['name'])
         if storage.exists(variation_name):
             if replace:
@@ -118,10 +111,7 @@ class StdImageFieldFile(ImageFieldFile):
 
     @classmethod
     def get_variation_name(cls, file_name, variation_name):
-        """
-        Returns the variation file name based on the model
-        it's field and it's variation.
-        """
+        """Return the variation file name based on the variation."""
         ext = cls.get_file_extension(file_name)
         path = file_name.rsplit('/', 1)[0]
         file_name = file_name.rsplit('/', 1)[-1].rsplit('.', 1)[0]
@@ -134,9 +124,7 @@ class StdImageFieldFile(ImageFieldFile):
 
     @staticmethod
     def get_file_extension(filename):
-        """
-        Returns the file extension.
-        """
+        """Return the file extension."""
         return os.path.splitext(filename)[1].lower()
 
     def delete(self, save=True):
@@ -150,13 +138,25 @@ class StdImageFieldFile(ImageFieldFile):
 
 
 class StdImageField(ImageField):
+
     """
-    Django field that behaves as ImageField, with some extra features like:
-        - Auto resizing
-        - Allow image deletion
+    Django ImageField that is able to create different size variations.
+
+    Extra features are:
+        - Django-Storages compatible (S3)
+        - Python 2, 3 and PyPy support
+        - Django 1.5 and later support
+        - Resize images to different sizes
+        - Access thumbnails on model level, no template tags required
+        - Preserves original image
+        - Asynchronous rendering (Celery & Co)
+        - Multi threading and processing for optimum performance
+        - Restrict accepted image dimensions
+        - Rename files to a standardized name (using a callable upload_to)
 
     :param variations: size variations of the image
     """
+
     descriptor_class = StdImageFileDescriptor
     attr_class = StdImageFieldFile
     def_variation = {
@@ -170,7 +170,8 @@ class StdImageField(ImageField):
                  render_variations=True, force_min_size=False,
                  *args, **kwargs):
         """
-        Standardized ImageField for Django
+        Standardized ImageField for Django.
+
         Usage: StdImageField(upload_to='PATH',
          variations={'thumbnail': {"width", "height", "crop", "resample"}})
         :param variations: size variations of the image
@@ -222,7 +223,8 @@ class StdImageField(ImageField):
 
     def set_variations(self, instance=None, **kwargs):
         """
-        Creates a "variation" object as attribute of the ImageField instance.
+        Create a "variation" object as attribute of the ImageField instance.
+
         Variation attribute will be of the same class as the original image, so
         "path", "url"... properties can be used
 
@@ -242,7 +244,7 @@ class StdImageField(ImageField):
                     setattr(field, name, variation_field)
 
     def contribute_to_class(self, cls, name):
-        """Call methods for generating all operations on specified signals"""
+        """Generating all operations on specified signals."""
         super(StdImageField, self).contribute_to_class(cls, name)
         signals.post_init.connect(self.set_variations, sender=cls)
 

@@ -76,14 +76,13 @@ def init_progressbar(count):
 
 
 def finish_progressbar():
-    global BAR
     BAR.finish()
 
 
 def render_field_variations(kwargs):
     try:
-        global BAR
         render_variations(**kwargs)
+        global BAR
         BAR += 1
     except:
         raise Exception("".join(traceback.format_exception(*sys.exc_info())))

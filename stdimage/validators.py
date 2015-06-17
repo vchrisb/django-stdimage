@@ -10,9 +10,9 @@ from PIL import Image
 
 
 class BaseSizeValidator(BaseValidator):
-    """
-    Base validator that validates the size of an image.
-    """
+
+    """Base validator that validates the size of an image."""
+
     compare = lambda self, x: True
 
     def __init__(self, width, height):
@@ -36,11 +36,13 @@ class BaseSizeValidator(BaseValidator):
 
 
 class MaxSizeValidator(BaseSizeValidator):
+
     """
     ImageField validator to validate the max with and height of an image.
 
     You may use float("inf") as an infinite boundary.
     """
+
     compare = lambda self, img_size, max_size:\
         img_size[0] > max_size[0] or img_size[1] > max_size[1]
     message = _('The image you uploaded is too large.'
@@ -50,11 +52,13 @@ class MaxSizeValidator(BaseSizeValidator):
 
 
 class MinSizeValidator(BaseSizeValidator):
+
     """
     ImageField validator to validate the min with and height of an image.
 
     You may use float("inf") as an infinite boundary.
     """
+
     compare = lambda self, img_size, min_size:\
         img_size[0] < min_size[0] or img_size[1] < min_size[1]
     message = _('The image you uploaded is too small.'

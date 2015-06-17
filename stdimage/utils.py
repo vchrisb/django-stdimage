@@ -88,9 +88,7 @@ def pre_save_delete_callback(sender, instance, **kwargs):
 
 def render_variations(file_name, variations, replace=False,
                       storage=DefaultStorage()):
-    """
-    Renders all variations for a given field.
-    """
+    """Render all variations for a given field."""
     for key, variation in variations.items():
         StdImageFieldFile.render_variation(
             file_name, variation, replace, storage

@@ -1,32 +1,29 @@
 language: python
 sudo: false
 python:
-  - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
   - "pypy"
   - "pypy3"
 env:
-  - DJANGO="<1.6,>=1.5"
   - DJANGO="<1.7,>=1.6"
   - DJANGO="<1.8,>=1.7"
   - DJANGO="<1.9,>=1.8"
 
 matrix:
   allow_failures:
-    - env: DJANGO="<1.6,>=1.5"
     - env: DJANGO="<1.7,>=1.6"
     - python: "2.6"
     - python: "3.2"
 install:
-  - pip install --upgrade pip
+  - pip install -U pip
   - pip install .
   - pip install Django$DJANGO
-  - pip install pytest pytest-pep8 pytest-flakes
+  - pip install -U pytest pytest-pep8 pytest-flakes pytest-isort pep257
   - pip install coveralls
 script:
-  coverage run --source=stdimage runtests.py
+  - coverage run --source=stdimage runtests.py
+  - pep257 stdimage
 after_success:
   coveralls
