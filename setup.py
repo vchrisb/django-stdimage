@@ -49,10 +49,6 @@ setup(
     ],
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests", ".egg-info"]),
     include_package_data=True,
-    requires=[
-        'Pillow (>=2.5)',
-        'progressbar2 (>=2.7)',
-    ],
     install_requires=[
         'pillow>=2.5',
         'progressbar2>=2.7',
