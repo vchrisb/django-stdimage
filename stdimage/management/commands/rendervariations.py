@@ -12,6 +12,7 @@ from django.db.models import get_model
 
 from stdimage.utils import render_variations
 
+is_pypy = '__pypy__' in sys.builtin_module_names
 BAR = None
 
 
@@ -43,24 +44,47 @@ class Command(BaseCommand):
             queryset = model_class._default_manager \
                 .exclude(**{'%s__isnull' % field_name: True}) \
                 .exclude(**{field_name: ''})
-            images = queryset.values_list(field_name, flat=True)
+            images = queryset.values_list(field_name, flat=True).iterator()
+            count = queryset.count()
 
-            pool = Pool(
-                initializer=init_progressbar,
-                initargs=[queryset.count()]
+            if is_pypy:  # pypy doesn't handle multiprocessing to well
+                self.render_linear(field, images, count, replace)
+            else:
+                self.render_in_parallel(field, images, count, replace)
+
+    @staticmethod
+    def render_in_parallel(field, images, count, replace):
+        pool = Pool(
+            initializer=init_progressbar,
+            initargs=[count]
+        )
+        args = [
+            dict(
+                file_name=file_name,
+                variations=field.variations,
+                replace=replace,
             )
-            args = [
-                dict(
-                    file_name=file_name,
-                    variations=field.variations,
-                    replace=replace,
-                )
-                for file_name in images
-            ]
-            pool.map(render_field_variations, args)
-            pool.apply(finish_progressbar)
-            pool.close()
-            pool.join()
+            for file_name in images
+        ]
+        pool.map(render_field_variations, args)
+        pool.apply(finish_progressbar)
+        pool.close()
+        pool.join()
+
+    @staticmethod
+    def render_linear(field, images, count, replace):
+        init_progressbar(count)
+        args_list = [
+            dict(
+                file_name=file_name,
+                variations=field.variations,
+                replace=replace,
+            )
+            for file_name in images
+        ]
+        for args in args_list:
+            render_variations(**args)
+        finish_progressbar()
 
 
 def init_progressbar(count):

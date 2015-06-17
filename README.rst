@@ -214,6 +214,9 @@ Multi processing
   It not only increased performance but the garbage collection
   and therefore the huge memory footprint from previous versions.
 
+  **Note:** PyPy seems to have some problems regarding multiprocessing,
+  for that matter all multiprocessing is disabled in PyPy.
+
 
 Testing
 -------
