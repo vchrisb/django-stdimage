@@ -135,8 +135,8 @@ Validators
 
 
         class MyClass(models.Model)
-            image1 = StdImageField(validators=MinSizeValidator(800, 600))
-            image2 = StdImageField(validators=MaxSizeValidator(1028, 768))
+            image1 = StdImageField(validators=[MinSizeValidator(800, 600)])
+            image2 = StdImageField(validators=[MaxSizeValidator(1028, 768)])
 
 
  CAUTION: The MaxSizeValidator should be used with caution.
