@@ -1,5 +1,6 @@
 import os
 
+import pytest
 from PIL import Image
 
 from stdimage.utils import render_variations
@@ -7,6 +8,7 @@ from tests.models import ManualVariationsModel
 from tests.test_models import IMG_DIR
 
 
+@pytest.mark.django_db
 class TestRenderVariations(object):
     def test_render_variations(self, image_upload_file):
         instance = ManualVariationsModel.customer_manager.create(

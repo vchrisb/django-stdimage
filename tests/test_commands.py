@@ -1,11 +1,13 @@
 import os
 import time
 
+import pytest
 from django.core.management import call_command
 
 from tests.models import ManualVariationsModel, ThumbnailModel
 
 
+@pytest.mark.django_db
 class TestRenderVariations(object):
     def test_no_options(self, image_upload_file):
         obj = ManualVariationsModel.customer_manager.create(

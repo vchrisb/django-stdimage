@@ -91,15 +91,17 @@ class StdImageFieldFile(ImageFieldFile):
                             resample=resample
                         )
 
+                    size = variation['width'], variation['height']
+                    size = tuple(int(i) for i in size)
                     if variation['crop']:
                         img = ImageOps.fit(
                             img,
-                            (variation['width'], variation['height']),
+                            size,
                             method=resample
                         )
                     else:
                         img.thumbnail(
-                            (variation['width'], variation['height']),
+                            size,
                             resample=resample
                         )
 
