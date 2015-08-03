@@ -104,7 +104,9 @@ Utils
             UploadToAutoSlugClassNameDir
 
 
-        class MyClass(models.Model)
+        class MyClass(models.Model):
+            title = models.CharField(max_length=50)
+
             # Gets saved to MEDIA_ROOT/myclass/#FILENAME#.#EXT#
             image1 = StdImageField(upload_to=UploadToClassNameDir())
 
@@ -118,10 +120,10 @@ Utils
             image4 = StdImageField(upload_to=UploadToClassNameDirUUID())
 
             # Gets save to MEDIA_ROOT/images/#SLUG#.#EXT#
-            image5 = StdImageField(upload_to=UploadToAutoSlug(path='images))
+            image5 = StdImageField(upload_to=UploadToAutoSlug(populate_from='title'))
 
             # Gets save to MEDIA_ROOT/myclass/#SLUG#.#EXT#
-            image6 = StdImageField(upload_to=UploadToAutoSlugClassNameDir())
+            image6 = StdImageField(upload_to=UploadToAutoSlugClassNameDir(populate_from='title'))
 
 Validators
  The `StdImageField` doesn't implement any size validation. Validation can be specified using the validator attribute
