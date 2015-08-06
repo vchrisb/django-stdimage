@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 from setuptools import setup, Command, find_packages
+import sys
 
 
 class PyTest(Command):
@@ -20,9 +22,18 @@ class PyTest(Command):
         raise SystemExit(errno)
 
 
+if 'sdist' in sys.argv or 'develop' in sys.argv:
+    try:
+        os.chdir('stdimage')
+        from django.core import management
+        management.call_command('compilemessages')
+    finally:
+        os.chdir('..')
+
+
 setup(
     name='django-stdimage',
-    version='2.0.2',
+    version='2.0.3',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',

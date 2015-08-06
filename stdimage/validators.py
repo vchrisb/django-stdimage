@@ -46,7 +46,7 @@ class MaxSizeValidator(BaseSizeValidator):
     compare = lambda self, img_size, max_size:\
         img_size[0] > max_size[0] or img_size[1] > max_size[1]
     message = _('The image you uploaded is too large.'
-                ' The required minimal resolution is:'
+                ' The required maximum resolution is:'
                 ' %(with)sx%(height)s px.')
     code = 'max_resolution'
 
@@ -62,5 +62,5 @@ class MinSizeValidator(BaseSizeValidator):
     compare = lambda self, img_size, min_size:\
         img_size[0] < min_size[0] or img_size[1] < min_size[1]
     message = _('The image you uploaded is too small.'
-                ' The required minimal resolution is:'
+                ' The required minimum resolution is:'
                 ' %(with)sx%(height)s px.')
