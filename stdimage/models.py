@@ -92,7 +92,8 @@ class StdImageFieldFile(ImageFieldFile):
                         )
 
                     size = variation['width'], variation['height']
-                    size = tuple(int(i) if i != float('inf') else i for i in size)
+                    size = tuple(int(i) if i != float('inf') else i
+                                 for i in size)
                     if variation['crop']:
                         img = ImageOps.fit(
                             img,
