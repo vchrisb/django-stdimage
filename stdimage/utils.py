@@ -72,7 +72,7 @@ class UploadToAutoSlugClassNameDir(UploadToClassNameDir, UploadToAutoSlug):
 def pre_delete_delete_callback(sender, instance, **kwargs):
     for field in instance._meta.fields:
         if isinstance(field, StdImageField):
-            getattr(instance, field.name).delete()
+            getattr(instance, field.name).delete(False)
 
 
 def pre_save_delete_callback(sender, instance, **kwargs):
