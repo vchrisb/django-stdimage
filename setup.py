@@ -33,7 +33,7 @@ if 'sdist' in sys.argv or 'develop' in sys.argv:
 
 setup(
     name='django-stdimage',
-    version='2.0.7',
+    version='2.0.8',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
