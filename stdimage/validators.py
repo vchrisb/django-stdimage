@@ -10,7 +10,6 @@ from PIL import Image
 
 
 class BaseSizeValidator(BaseValidator):
-
     """Base validator that validates the size of an image."""
 
     compare = lambda self, x: True
@@ -36,7 +35,6 @@ class BaseSizeValidator(BaseValidator):
 
 
 class MaxSizeValidator(BaseSizeValidator):
-
     """
     ImageField validator to validate the max with and height of an image.
 
@@ -52,7 +50,6 @@ class MaxSizeValidator(BaseSizeValidator):
 
 
 class MinSizeValidator(BaseSizeValidator):
-
     """
     ImageField validator to validate the min with and height of an image.
 
