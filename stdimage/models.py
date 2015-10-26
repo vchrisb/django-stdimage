@@ -18,7 +18,6 @@ logger = logging.getLogger()
 
 
 class StdImageFileDescriptor(ImageFileDescriptor):
-
     """The variation property of the field is accessible in instance cases."""
 
     def __set__(self, instance, value):
@@ -27,7 +26,6 @@ class StdImageFileDescriptor(ImageFileDescriptor):
 
 
 class StdImageFieldFile(ImageFieldFile):
-
     """Like ImageFieldFile but handles variations."""
 
     def save(self, name, content, save=True):
@@ -135,7 +133,6 @@ class StdImageFieldFile(ImageFieldFile):
 
 
 class StdImageField(ImageField):
-
     """
     Django ImageField that is able to create different size variations.
 
