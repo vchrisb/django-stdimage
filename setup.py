@@ -33,7 +33,7 @@ if 'sdist' in sys.argv or 'develop' in sys.argv:
 
 setup(
     name='django-stdimage',
-    version='2.0.6',
+    version='2.0.7',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
@@ -62,7 +62,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'pillow>=2.5',
-        'progressbar2>=2.7',
+        'progressbar2>=2.7,<3.0.0',
     ],
     cmdclass={'test': PyTest},
 )
