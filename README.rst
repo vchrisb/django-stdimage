@@ -68,7 +68,7 @@ Variations
 
             # creates a thumbnail resized to maximum size to fit a 100x75 area
             image = StdImageField(upload_to='path/to/img',
-                                  variations={'thumbnail': {'with': 100, 'height': 75}})
+                                  variations={'thumbnail': {'width': 100, 'height': 75}})
 
             # is the same as dictionary-style call
             image = StdImageField(upload_to='path/to/img', variations={'thumbnail': (100, 75)})
