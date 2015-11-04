@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import sys
-
 from setuptools import Command, find_packages, setup
 
 
@@ -21,15 +18,6 @@ class PyTest(Command):
 
         errno = subprocess.call([sys.executable, 'runtests.py'])
         raise SystemExit(errno)
-
-
-if 'sdist' in sys.argv or 'develop' in sys.argv:
-    try:
-        os.chdir('stdimage')
-        from django.core import management
-        management.call_command('compilemessages')
-    finally:
-        os.chdir('..')
 
 
 setup(
