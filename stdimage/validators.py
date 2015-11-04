@@ -12,7 +12,8 @@ from PIL import Image
 class BaseSizeValidator(BaseValidator):
     """Base validator that validates the size of an image."""
 
-    compare = lambda self, x: True
+    def compare(self, x):
+        return True
 
     def __init__(self, width, height):
         self.limit_value = width, height
@@ -41,8 +42,8 @@ class MaxSizeValidator(BaseSizeValidator):
     You may use float("inf") as an infinite boundary.
     """
 
-    compare = lambda self, img_size, max_size:\
-        img_size[0] > max_size[0] or img_size[1] > max_size[1]
+    def compare(self, img_size, max_size):
+        return img_size[0] > max_size[0] or img_size[1] > max_size[1]
     message = _('The image you uploaded is too large.'
                 ' The required maximum resolution is:'
                 ' %(with)sx%(height)s px.')
@@ -56,8 +57,8 @@ class MinSizeValidator(BaseSizeValidator):
     You may use float("inf") as an infinite boundary.
     """
 
-    compare = lambda self, img_size, min_size:\
-        img_size[0] < min_size[0] or img_size[1] < min_size[1]
+    def compare(self, img_size, min_size):
+        return img_size[0] < min_size[0] or img_size[1] < min_size[1]
     message = _('The image you uploaded is too small.'
                 ' The required minimum resolution is:'
                 ' %(with)sx%(height)s px.')

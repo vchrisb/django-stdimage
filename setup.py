@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-from setuptools import setup, Command, find_packages
 import sys
+
+from setuptools import Command, find_packages, setup
 
 
 class PyTest(Command):
@@ -58,7 +59,9 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests", ".egg-info"]),
+    packages=find_packages(exclude=[
+        "*.tests", "*.tests.*", "tests.*", "tests", ".egg-info"
+    ]),
     include_package_data=True,
     install_requires=[
         'pillow>=2.5',

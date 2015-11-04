@@ -86,7 +86,7 @@ Variations
             })
 
  For using generated variations in templates use "myimagefield.variation_name".
- 
+
  Example
     .. code :: python
 
@@ -96,7 +96,7 @@ Variations
 Utils
  By default StdImageField stores images without modifying the file name.
  If you want to use more consistent file names you can use the build in upload callables.
- 
+
  Example
     .. code :: python
 
@@ -202,7 +202,7 @@ Async image processing
         from django.db import models
         from stdimage.models import StdImageField
         from stdimage.utils import UploadToClassNameDir
-        
+
         from tasks import process_photo_image
 
         def image_processor(file_name, variations, storage):
@@ -236,6 +236,17 @@ Multi processing
   **Note:** PyPy seems to have some problems regarding multiprocessing,
   for that matter all multiprocessing is disabled in PyPy.
 
+
+Contributing
+============
+
+Getting started is easy. After setting up your env, just install:
+
+.. code::
+
+    pip install -r requirements-dev.txt; pre-commit install
+
+To make contributing even easier, make sure your editor's or IDE's [EditorConfig] support is enabled.
 
 Testing
 -------
