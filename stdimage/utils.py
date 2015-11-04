@@ -11,14 +11,16 @@ from .models import StdImageField, StdImageFieldFile
 
 
 class UploadTo(object):
-    file_pattern = "%(name)s.%(ext)s"
+    file_pattern = "%(name)s%(ext)s"
     path_pattern = "%(path)s"
 
     def __call__(self, instance, filename):
+        path, ext = os.path.splitext(filename)
+        path, name = os.path.split(path)
         defaults = {
-            'ext': filename.rsplit('.', 1)[1],
-            'name': filename.rsplit('.', 1)[0],
-            'path': filename.rsplit('/', 1)[0],
+            'ext': ext,
+            'name': name,
+            'path': path,
             'class_name': instance.__class__.__name__,
         }
         defaults.update(self.kwargs)
