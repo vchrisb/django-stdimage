@@ -42,7 +42,7 @@ Installation
 
 Simply install the latest stable package using the command
 
-``easy_install django-stdimage`` or ``pip django-stdimage``
+``easy_install django-stdimage`` or ``pip install django-stdimage``
 
 and add ``'stdimage'`` to ``INSTALLED_APPs`` in your settings.py, that's it!
 
