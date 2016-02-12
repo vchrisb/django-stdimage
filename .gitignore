@@ -4,6 +4,7 @@ django_stdimage.egg-info
 build/
 dist/
 .idea/
+.tox/
 
 
 .cache/
