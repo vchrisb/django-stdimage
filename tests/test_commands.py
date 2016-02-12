@@ -4,7 +4,7 @@ import time
 import pytest
 from django.core.management import call_command
 
-from tests.models import ManualVariationsModel, ThumbnailModel
+from tests.models import ManualVariationsModel, MyStorageModel, ThumbnailModel
 
 
 @pytest.mark.django_db
@@ -62,3 +62,14 @@ class TestRenderVariations(object):
         assert os.path.exists(file_path)
         after = os.path.getmtime(file_path)
         assert before != after
+
+    def test_none_default_storage(self, image_upload_file):
+        obj = MyStorageModel.customer_manager.create(
+            image=image_upload_file
+        )
+        file_path = obj.image.thumbnail.path
+        call_command(
+            'rendervariations',
+            'tests.MyStorageModel.image'
+        )
+        assert os.path.exists(file_path)

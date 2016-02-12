@@ -23,6 +23,8 @@ INSTALLED_APPS = (
     'tests'
 )
 
+DEFAULT_FILE_STORAGE = 'tests.storage.MyFileSystemStorage'
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

@@ -16,10 +16,6 @@ from stdimage.utils import render_variations
 BAR = None
 
 
-def class_to_path(cls):
-    return '.'.join((cls.__module__, cls.__class__.__name__))
-
-
 class MemoryUsageWidget(progressbar.widgets.WidgetBase):
     def __call__(self, progress, data):
         return 'RAM: {0:10.1f} MB'.format(
@@ -64,7 +60,7 @@ class Command(BaseCommand):
                 file_name=file_name,
                 variations=field.variations,
                 replace=replace,
-                storage=class_to_path(field.storage),
+                storage=field.storage.deconstruct()[0],
             )
             for file_name in images
         ]

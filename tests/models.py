@@ -1,3 +1,4 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
 
@@ -101,6 +102,16 @@ class ManualVariationsModel(CustomManagerModel):
         upload_to=UploadTo(name='image', path='img'),
         variations={'thumbnail': (150, 150, True)},
         render_variations=False
+    )
+
+
+class MyStorageModel(CustomManagerModel):
+    """delays creation of 150x150 thumbnails until it is called manually"""
+    image = StdImageField(
+        upload_to=UploadTo(name='image', path='img'),
+        variations={'thumbnail': (150, 150, True)},
+        render_variations=False,
+        storage=FileSystemStorage(),
     )
 
 
