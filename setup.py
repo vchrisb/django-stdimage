@@ -8,6 +8,7 @@ setup(
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
+    download_url='https://github.com/codingjoe/django-stdimage',
     author_email='info@johanneshoppe.com',
     license='MIT',
     classifiers=[

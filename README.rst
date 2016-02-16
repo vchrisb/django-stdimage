@@ -23,6 +23,10 @@
    :alt: Join the chat at https://gitter.im/codingjoe/django-stdimage
    :target: https://gitter.im/codingjoe/django-stdimage?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
+.. image:: https://img.shields.io/badge/Django-CC-ee66dd.svg
+   :alt: Django-CC
+   :target: https://github.com/codingjoe/django-cc
+
 Django Standarized Image Field
 ==============================
 
@@ -236,17 +240,5 @@ Multi processing
   for that matter all multiprocessing is disabled in PyPy.
 
 
-Contributing
-============
-
-Getting started is easy. After setting up your env, just install:
-
-.. code::
-
-    pip install -r requirements-dev.txt; pre-commit install
-
-To make contributing even easier, make sure your editor's or IDE's [EditorConfig] support is enabled.
-
-Testing
--------
-To run the tests simply run ``python setup.py test``
+`Contributing <CONTRIBUTING.md>`_
+=================================
