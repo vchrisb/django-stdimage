@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='django-stdimage',
-    version='2.3.1',
+    version='2.3.2',
     description='Django Standarized Image Field',
     author='codingjoe',
     url='https://github.com/codingjoe/django-stdimage',
