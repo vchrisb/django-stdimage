@@ -211,3 +211,5 @@ and therefore the huge memory footprint from previous versions.
 for that matter all multiprocessing is disabled in PyPy.
 
 ## [Contributing](CONTRIBUTING.md)
+
+## [License](LICENSE)
