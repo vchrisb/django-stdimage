@@ -24,7 +24,8 @@ from .models import (
     ThumbnailModel, ResizeCropModel, AutoSlugClassNameDirModel,
     UUIDModel,
     UtilVariationsModel,
-    ThumbnailWithoutDirectoryModel)  # NoQA
+    ThumbnailWithoutDirectoryModel,
+    CustomRenderVariationsModel)  # NoQA
 
 IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
 
@@ -157,6 +158,14 @@ class TestModel(TestStdImage):
         thumbnail = os.path.join(settings.MEDIA_ROOT, 'custom.thumbnail.gif')
         assert os.path.exists(original)
         assert os.path.exists(thumbnail)
+
+    def test_custom_render_variations(self):
+        instance = CustomRenderVariationsModel.objects.create(
+            image=self.fixtures['600x400.jpg']
+        )
+        # Image size must be 100x100 despite variations settings
+        assert instance.image.thumbnail.width == 100
+        assert instance.image.thumbnail.height == 100
 
 
 class TestUtils(TestStdImage):

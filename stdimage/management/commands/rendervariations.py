@@ -57,13 +57,18 @@ class Command(BaseCommand):
             queryset = model_class._default_manager \
                 .exclude(**{'%s__isnull' % field_name: True}) \
                 .exclude(**{field_name: ''})
+            obj = queryset.first()
+            do_render = True
+            if obj:
+                f = getattr(obj, field_name)
+                do_render = f.field.render_variations
             images = queryset.values_list(field_name, flat=True).iterator()
             count = queryset.count()
 
-            self.render(field, images, count, replace)
+            self.render(field, images, count, replace, do_render)
 
     @staticmethod
-    def render(field, images, count, replace):
+    def render(field, images, count, replace, do_render):
         pool = Pool(
             initializer=init_progressbar,
             initargs=[count]
@@ -71,6 +76,7 @@ class Command(BaseCommand):
         args = [
             dict(
                 file_name=file_name,
+                do_render=do_render,
                 variations=field.variations,
                 replace=replace,
                 storage=field.storage.deconstruct()[0],
@@ -102,7 +108,12 @@ def finish_progressbar():
 def render_field_variations(kwargs):
     try:
         kwargs['storage'] = get_storage_class(kwargs['storage'])()
-        render_variations(**kwargs)
+        do_render = kwargs.pop('do_render')
+        if callable(do_render):
+            do_render = do_render(**kwargs)
+        if do_render:
+            render_variations(**kwargs)
+
         global BAR
         BAR += 1
     except:
