@@ -123,5 +123,5 @@ def render_field_variations(kwargs):
 
         global BAR
         BAR += 1
-    except:
+    except Exception:
         raise Exception("".join(traceback.format_exception(*sys.exc_info())))
