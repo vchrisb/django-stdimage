@@ -249,7 +249,7 @@ class StdImageField(ImageField):
                     setattr(field, name, variation_field)
 
     def contribute_to_class(self, cls, name):
-        """Generating all operations on specified signals."""
+        """Generate all operations on specified signals."""
         super(StdImageField, self).contribute_to_class(cls, name)
         signals.post_init.connect(self.set_variations, sender=cls)
 
