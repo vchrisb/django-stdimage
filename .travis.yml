@@ -17,7 +17,7 @@ matrix:
   fast_finish: true
   allow_failures:
   - env: DJANGO=master
- exclude:
+  exclude:
   - env: DJANGO=master
     python: "2.7"
   - env: TOXENV=qa
@@ -25,7 +25,7 @@ matrix:
   - env: TOXENV=qa
     python: "3.5"
 install:
-  - pip install --upgrade pip tox coveralls
+- pip install --upgrade pip tox coveralls
 before_script:
 - |
   if [[ -z $TOXENV ]]; then
@@ -43,5 +43,5 @@ deploy:
     secure: dnmVaqnmG6mSrmI9q6nL2l0aGkX56+WAsqdT/J1O2hBpFBOE4NiqH+2ryIqZj1wrvHZ72/jjyT5Xi1MWYxwDtDfkBIp+juHUGPbFfGy3J7EVgGkmf38E5SC2Q9IHc3A1iHxTZAX3o816TP3bt5vwGll3UzSMiaaPRQ/AiK4+og4=
   on:
     tags: true
-    distributions: sdist bdist_wheel
-    repo: codingjoe/django-stdimage
+  distributions: sdist bdist_wheel
+  repo: codingjoe/django-stdimage
