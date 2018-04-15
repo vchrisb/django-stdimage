@@ -62,62 +62,70 @@ class StdImageFieldFile(ImageFieldFile):
         if storage.exists(variation_name):
             if replace:
                 storage.delete(variation_name)
-                logger.info('File "{}" already exists and has been replaced.')
+                logger.info('File "{}" already exists and has been replaced.',
+                            variation_name)
             else:
-                logger.info('File "{}" already exists.')
+                logger.info('File "{}" already exists.', variation_name)
                 return variation_name
-
-        resample = variation['resample']
 
         ImageFile.LOAD_TRUNCATED_IMAGES = True
         with storage.open(file_name) as f:
             with Image.open(f) as img:
-                save_kargs = {}
-                file_format = img.format
-
-                if cls.is_smaller(img, variation):
-                    factor = 1
-                    while img.size[0] / factor \
-                            > 2 * variation['width'] \
-                            and img.size[1] * 2 / factor \
-                            > 2 * variation['height']:
-                        factor *= 2
-                    if factor > 1:
-                        img.thumbnail(
-                            (int(img.size[0] / factor),
-                             int(img.size[1] / factor)),
-                            resample=resample
-                        )
-
-                    size = variation['width'], variation['height']
-                    size = tuple(int(i) if i != float('inf') else i
-                                 for i in size)
-
-                    if file_format == 'JPEG':
-                        # http://stackoverflow.com/a/21669827
-                        img = img.convert('RGB')
-                        save_kargs['optimize'] = True
-                        save_kargs['quality'] = 'web_high'
-                        if size[0] * size[1] > 10000:  # roughly <10kb
-                            save_kargs['progressive'] = True
-
-                    if variation['crop']:
-                        img = ImageOps.fit(
-                            img,
-                            size,
-                            method=resample
-                        )
-                    else:
-                        img.thumbnail(
-                            size,
-                            resample=resample
-                        )
-
+                img, save_kargs = cls.process_variation(variation, image=img)
                 with BytesIO() as file_buffer:
-                    img.save(file_buffer, file_format, **save_kargs)
+                    img.save(file_buffer, **save_kargs)
                     f = ContentFile(file_buffer.getvalue())
                     storage.save(variation_name, f)
         return variation_name
+
+    @classmethod
+    def process_variation(cls, variation, image):
+        """Process variation before actual saving."""
+        save_kargs = {}
+        file_format = image.format
+        save_kargs['format'] = file_format
+
+        resample = variation['resample']
+
+        if cls.is_smaller(image, variation):
+            factor = 1
+            while image.size[0] / factor \
+                    > 2 * variation['width'] \
+                    and image.size[1] * 2 / factor \
+                    > 2 * variation['height']:
+                factor *= 2
+            if factor > 1:
+                image.thumbnail(
+                    (int(image.size[0] / factor),
+                     int(image.size[1] / factor)),
+                    resample=resample
+                )
+
+            size = variation['width'], variation['height']
+            size = tuple(int(i) if i != float('inf') else i
+                         for i in size)
+
+            if file_format == 'JPEG':
+                # http://stackoverflow.com/a/21669827
+                image = image.convert('RGB')
+                save_kargs['optimize'] = True
+                save_kargs['quality'] = 'web_high'
+                if size[0] * size[1] > 10000:  # roughly <10kb
+                    save_kargs['progressive'] = True
+
+            if variation['crop']:
+                image = ImageOps.fit(
+                    image,
+                    size,
+                    method=resample
+                )
+            else:
+                image.thumbnail(
+                    size,
+                    resample=resample
+                )
+
+        return image, save_kargs
 
     @classmethod
     def get_variation_name(cls, file_name, variation_name):

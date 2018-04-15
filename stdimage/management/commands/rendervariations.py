@@ -59,6 +59,7 @@ class Command(BaseCommand):
                 variations=field.variations,
                 replace=replace,
                 storage=field.storage.deconstruct()[0],
+                field_class=field.attr_class,
             )
             for file_name in images
         )
@@ -78,6 +79,7 @@ def render_field_variations(kwargs):
     kwargs['storage'] = get_storage_class(kwargs['storage'])()
     do_render = kwargs.pop('do_render')
     if callable(do_render):
+        kwargs.pop('field_class')
         do_render = do_render(**kwargs)
     if do_render:
         render_variations(**kwargs)
