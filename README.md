@@ -196,9 +196,12 @@ class AsyncImageModel(models.Model)
 You might want to add new variations to a field. That means you need to render new variations for missing fields.
 This can be accomplished using a management command.
 ```bash
-python manage.py rendervariations 'app_name.model_name.field_name' [--replace]
+python manage.py rendervariations 'app_name.model_name.field_name' [--replace] [-i/--ignore-missing]
 ```
 The `replace` option will replace all existing files.
+The `ignore-missing` option will suspend missing source file errors and keep
+rendering variations for other files. Othervise command will stop on first
+missing file.
 
 ### Multi processing
 Since version 2 stdImage supports multiprocessing.
