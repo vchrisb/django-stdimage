@@ -47,6 +47,7 @@ class install_lib(_install_lib):
 
 
 setup(
+    name='django-stdimage',
     use_scm_version=True,
     cmdclass={
         'build': build,
