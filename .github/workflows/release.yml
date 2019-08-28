@@ -1,10 +1,6 @@
 name: PyPi Release
 
-on:
-  release:
-  push:
-    branches:
-      - master
+on: [release]
 
 jobs:
   build:
