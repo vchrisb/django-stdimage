@@ -1,5 +1,4 @@
 [![version](https://img.shields.io/pypi/v/django-stdimage.svg)](https://pypi.python.org/pypi/django-stdimage/)
-[![ci](https://api.travis-ci.org/codingjoe/django-stdimage.svg?branch=master)](https://travis-ci.org/codingjoe/django-stdimage)
 [![codecov](https://codecov.io/gh/codingjoe/django-stdimage/branch/master/graph/badge.svg)](https://codecov.io/gh/codingjoe/django-stdimage)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
