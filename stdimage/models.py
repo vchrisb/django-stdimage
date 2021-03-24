@@ -284,7 +284,7 @@ class StdImageField(ImageField):
             MinSizeValidator(self.min_size[0], self.min_size[1])(value)
 
     def save_form_data(self, instance, data):
-        if self.delete_orphans and self.blank and (data is False or data is not None):
+        if self.delete_orphans and (data is False or data is not None):
             file = getattr(instance, self.name)
             if file and file._committed and file != data:
                 file.delete(save=False)
