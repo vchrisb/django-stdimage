@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from . import models
-from .models import (AdminDeleteModel, CustomRenderVariationsModel, ResizeCropModel,
+from .models import (AdminDeleteModel, AdminUpdateModel, CustomRenderVariationsModel, ResizeCropModel,
                      ResizeModel, SimpleModel, ThumbnailModel,
                      ThumbnailWithoutDirectoryModel, UtilVariationsModel,)
 
@@ -198,13 +198,28 @@ class TestUtils(TestStdImage):
         assert not os.path.exists(path)
 
     def test_pre_save_delete_callback_new(self, admin_client):
-        AdminDeleteModel.objects.create(
+        obj = AdminDeleteModel.objects.create(
             image=self.fixtures['100.gif']
         )
+        path = obj.image.path
+        assert os.path.exists(path)
         admin_client.post('/admin/tests/admindeletemodel/1/change/', {
             'image': self.fixtures['600x400.jpg'],
         })
-        assert not os.path.exists(os.path.join(IMG_DIR, 'image.gif'))
+        assert not os.path.exists(path)
+        assert os.path.exists(os.path.join(IMG_DIR, '600x400.jpg'))
+
+    def test_pre_save_delete_callback_update(self, admin_client):
+        obj = AdminUpdateModel.objects.create(
+            image=self.fixtures['100.gif']
+        )
+        path = obj.image.path
+        assert os.path.exists(path)
+        admin_client.post('/admin/tests/adminupdatemodel/1/change/', {
+            'image': self.fixtures['600x400.jpg'],
+        })
+        assert not os.path.exists(path)
+        assert os.path.exists(os.path.join(IMG_DIR, '600x400.jpg'))
 
     def test_render_variations_callback(self, db):
         obj = UtilVariationsModel.objects.create(image=self.fixtures['100.gif'])
