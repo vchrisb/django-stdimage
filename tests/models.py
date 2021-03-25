@@ -29,6 +29,7 @@ class AdminDeleteModel(models.Model):
         delete_orphans=True,
     )
 
+
 class AdminUpdateModel(models.Model):
     """can be updated through admin, image not optional"""
     image = StdImageField(
@@ -39,6 +40,7 @@ class AdminUpdateModel(models.Model):
         blank=False,
         delete_orphans=True,
     )
+
 
 class ResizeModel(models.Model):
     """resizes image to maximum size to fit a 640x480 area"""

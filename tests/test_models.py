@@ -9,8 +9,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from . import models
-from .models import (AdminDeleteModel, AdminUpdateModel, CustomRenderVariationsModel, ResizeCropModel,
-                     ResizeModel, SimpleModel, ThumbnailModel,
+from .models import (AdminDeleteModel, AdminUpdateModel, CustomRenderVariationsModel,
+                     ResizeCropModel, ResizeModel, SimpleModel, ThumbnailModel,
                      ThumbnailWithoutDirectoryModel, UtilVariationsModel,)
 
 IMG_DIR = os.path.join(settings.MEDIA_ROOT, 'img')
