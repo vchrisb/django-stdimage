@@ -30,6 +30,18 @@ class AdminDeleteModel(models.Model):
     )
 
 
+class AdminUpdateModel(models.Model):
+    """can be updated through admin, image not optional"""
+    image = StdImageField(
+        upload_to=upload_to,
+        variations={
+            'thumbnail': (100, 75),
+        },
+        blank=False,
+        delete_orphans=True,
+    )
+
+
 class ResizeModel(models.Model):
     """resizes image to maximum size to fit a 640x480 area"""
     image = StdImageField(

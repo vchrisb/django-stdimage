@@ -3,6 +3,7 @@ from django.contrib import admin
 from . import models
 
 admin.site.register(models.AdminDeleteModel)
+admin.site.register(models.AdminUpdateModel)
 admin.site.register(models.ResizeCropModel)
 admin.site.register(models.ResizeModel)
 admin.site.register(models.SimpleModel)
