@@ -45,4 +45,4 @@ ROOT_URLCONF = "tests.urls"
 
 SECRET_KEY = "foobar"
 
-USE_L10N = True
+USE_TZ = True
